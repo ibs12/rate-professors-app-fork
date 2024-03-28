@@ -1,4 +1,5 @@
 <?php
+
 $servername = ""; // enter servername
 $username = ""; // enter ubit
 $password = ""; // enter UB ID number

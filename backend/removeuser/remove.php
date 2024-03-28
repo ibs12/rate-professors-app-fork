@@ -1,4 +1,5 @@
 <?php
+
 // Include database configuration file
 include '../db_config.php';
 
@@ -49,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+
         // Prepare SQL statements
         $stmtUser = $conn->prepare("SELECT * FROM users WHERE username = ? AND userID = ?");
         $stmtSession = $conn->prepare("SELECT * FROM sessions WHERE sessionId = ? AND userID = ?");
@@ -93,8 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(400); // Bad request
         echo json_encode(["message" => "Invalid request"]);
     }
+
     exit;
 } else {
     http_response_code(405);
     echo json_encode(["message" => "Method not allowed"]);
 }
+?>

@@ -32,12 +32,57 @@ const AccountSettingsPage = () => {
     const navigate = useNavigate(); // Initialize useNavigate
 
 
+    
 
     const handleConfirmDelete = () => {
-        setIsModalOpen(false);
-        console.log('Account deleted'); // Replace with actual deletion logic
-        navigate('/signuppage'); // Navigate to the sign-up page
+        const email = localStorage.getItem('email'); // assuming you have email stored
+       // const sessionId = localStorage.getItem('sessionId'); // adjust the key according to your storage
+        const userID = localStorage.getItem('userID'); // adjust the key according to your storage
+    
+        const data = {
+            email, // using the retrieved email
+            userID // using the retrieved userID
+        };
+
+    
+
+        // Use your backend endpoint URL
+        const backendUrl = 'http://localhost:8000/backend/removeuser/remove.php';
+        fetch(backendUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to delete account');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Here, data is the parsed JSON object
+            if (data.status === 'success') {
+                alert('Account successfully deleted');
+                navigate('/signuppage'); // Navigate to the sign-up page or login page
+            } else {
+                // Handle any specific server-sent error messages
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            // Catch any errors in the fetch or parsing process
+            console.error('Delete account error:', error);
+            alert(`Failed to delete account: ${error.message}`);
+        });
+    
+
+        setIsModalOpen(false); // Close the modal after attempting to delete the account
     };
+
+    // Your existing component code...
+
 
 
     // Simple Modal Component
