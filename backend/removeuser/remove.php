@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 // Check if the request is a POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
-    if (isset($data["username"]) && isset($data["sessionId"]) && isset($data["userID"])) {
-        $post_username = $data["username"]; // Use a different variable name here
+    if (isset($data["email"]) && isset($data["sessionId"]) && isset($data["userID"])) {
+        $post_email = $data["email"]; // Use a different variable name here
         $sessionId = $data["sessionId"];
         $userID = $data["userID"];
 
@@ -52,16 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         // Prepare SQL statements
-        $stmtUser = $conn->prepare("SELECT * FROM users WHERE username = ? AND userID = ?");
-        $stmtSession = $conn->prepare("SELECT * FROM sessions WHERE sessionId = ? AND userID = ?");
+        $stmtUser = $conn->prepare("SELECT * FROM users WHERE email = ? AND userID = ?");
+        $stmtSession = $conn->prepare("SELECT * FROM sessions WHERE userID = ?");
 
         // Bind parameters and execute statements
-        $stmtUser->bind_param("si", $post_username, $userID); // Use $post_username here
+        $stmtUser->bind_param("si", $post_email, $userID); // Use $post_username here
         $stmtUser->execute();
         $userResult = $stmtUser->get_result();
 
         if ($userResult->num_rows > 0) {
-            $stmtSession->bind_param("si", $sessionId, $userID);
+            $stmtSession->bind_param("i", $userID);
             $stmtSession->execute();
             $sessionResult = $stmtSession->get_result();
 
@@ -69,13 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($sessionResult->num_rows > 0) {
                 // Prepare delete statements
                 $stmtDeleteUser = $conn->prepare("DELETE FROM users WHERE userID = ?");
-                $stmtDeleteSession = $conn->prepare("DELETE FROM sessions WHERE sessionId = ?");
+                $stmtDeleteSession = $conn->prepare("DELETE FROM sessions WHERE userID = ?");
 
                 // Execute delete statements
                 $stmtDeleteUser->bind_param("i", $userID);
                 $stmtDeleteUser->execute();
 
-                $stmtDeleteSession->bind_param("s", $sessionId);
+                $stmtDeleteSession->bind_param("i", $userID);
                 $stmtDeleteSession->execute();
 
                 // Return success response

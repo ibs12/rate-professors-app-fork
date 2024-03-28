@@ -36,11 +36,12 @@ const AccountSettingsPage = () => {
 
     const handleConfirmDelete = () => {
         const email = localStorage.getItem('email'); // assuming you have email stored
-       // const sessionId = localStorage.getItem('sessionId'); // adjust the key according to your storage
+        const sessionId = localStorage.getItem('sessionID'); // adjust the key according to your storage
         const userID = localStorage.getItem('userID'); // adjust the key according to your storage
     
         const data = {
             email, // using the retrieved email
+            sessionId,
             userID // using the retrieved userID
         };
 
