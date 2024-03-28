@@ -36,18 +36,18 @@ const AccountSettingsPage = () => {
 
     const handleConfirmDelete = () => {
         const email = localStorage.getItem('email'); // assuming you have email stored
-        const sessionId = localStorage.getItem('sessionId'); // adjust the key according to your storage
+       // const sessionId = localStorage.getItem('sessionId'); // adjust the key according to your storage
         const userID = localStorage.getItem('userID'); // adjust the key according to your storage
     
         const data = {
             email, // using the retrieved email
-            sessionId, // using the retrieved sessionID
             userID // using the retrieved userID
         };
+
     
 
         // Use your backend endpoint URL
-        const backendUrl = 'https://cors-anywhere.herokuapp.com/http://localhost/s24semesterproject-bread/backend/removeuser/remove.php';
+        const backendUrl = 'http://localhost:8000/backend/removeuser/remove.php';
         fetch(backendUrl, {
             method: 'POST',
             headers: {
