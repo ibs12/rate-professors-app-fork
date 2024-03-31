@@ -13,7 +13,7 @@ const Quiz = () => {
   const addToProfile = () => {
     const sessionID = localStorage.getItem('sessionID'); // Retrieve sessionID from localStorage
     if (sessionID) {
-      fetch('savequiz.php', {
+      fetch('${apiUrl}/backend/saveQuiz/savequiz.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
