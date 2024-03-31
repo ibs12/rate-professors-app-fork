@@ -29,3 +29,4 @@ yarn-error.log*
 
 /vendor/
 
+/backend/db_config.php
