@@ -11,10 +11,35 @@ const Quiz = () => {
   const navigate = useNavigate(); // Use the useNavigate hook
 
   const addToProfile = () => {
-    localStorage.setItem('quizResult', result);
-    alert('Result added to profile!');
-    navigate('/homepage'); // Navigate to homepage
+    const sessionID = localStorage.getItem('sessionID'); // Retrieve sessionID from localStorage
+    if (sessionID) {
+      fetch('savequiz.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionID: sessionID,
+          quizResult: result,
+        }),
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Result added to profile!');
+          navigate('/homepage'); // Navigate to homepage
+        } else {
+          throw new Error('Failed to save quiz result');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to save quiz result');
+      });
+    } else {
+      alert('SessionID not found');
+    }
   };
+  
   // Questions array remains the same...
 
   const handleSelectOption = (questionIndex, option) => {
