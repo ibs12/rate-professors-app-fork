@@ -10,10 +10,13 @@ const Quiz = () => {
 
   const navigate = useNavigate(); // Use the useNavigate hook
 
+  const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
   const addToProfile = () => {
-    const sessionID = localStorage.getItem('sessionID'); // Retrieve sessionID from localStorage
+    const sessionID = localStorage.getItem('sessionID');
     if (sessionID) {
-      fetch('${apiUrl}/backend/saveQuiz/savequiz.php', {
+      fetch(`${apiUrl}/backend/saveQuiz/savequiz.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,23 +26,22 @@ const Quiz = () => {
           quizResult: result,
         }),
       })
-      .then(response => {
-        if (response.ok) {
-          alert('Result added to profile!');
-          navigate('/homepage'); // Navigate to homepage
-        } else {
-          throw new Error('Failed to save quiz result');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to save quiz result');
-      });
+        .then(response => {
+          if (response.ok) {
+            alert('Result added to profile!');
+            navigate('/homepage');
+          } else {
+            throw new Error('Failed to save quiz result');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Failed to save quiz result');
+        });
     } else {
       alert('SessionID not found');
     }
   };
-  
   // Questions array remains the same...
 
   const handleSelectOption = (questionIndex, option) => {
