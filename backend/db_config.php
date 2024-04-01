@@ -1,9 +1,8 @@
 <?php
-$servername = "";
-$username = "";
-$password = "";
-$dbname = "";
-
+$servername = ""; // server name
+$username = ""; // UBIT
+$password = ""; // UB ID
+$dbname = ""; // database name
 // Prevent XSS attacks
 header('X-XSS-Protection: 1; mode=block');
 
