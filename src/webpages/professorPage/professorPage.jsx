@@ -6,6 +6,9 @@ import defaultPic from "../../images/defaultPic.png";
 import savedIcon from "../../images/saved_icon.png";
 import savedIconColored from "../../images/saved_icon_colored.png";
 
+const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
+const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
 
 const importProfessorImage = (imagePath) => {
     try {
@@ -62,6 +65,43 @@ const ProfessorCard = () => {
             });
         }, 1000);
     };
+
+    const toggleSave = () => {
+        // Retrieve session ID from local storage
+        const sessionID = localStorage.getItem('sessionID');
+    
+        // If session ID is not found, handle the error
+        if (!sessionID) {
+            console.error('Session ID not found in local storage');
+            return;
+        }
+    
+        // Construct the request body
+        const requestBody = {
+            sessionID: sessionID,
+            professorName: profname, // Assuming profname contains the professor's name
+            action: isSaved ? 'remove' : 'save'
+        };
+    
+        // Send request to backend
+        fetch(`${apiUrl}/backend/saveProfessor/saveList.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Update saved status based on response
+                setIsSaved(!isSaved);
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
+    
 
     const handleWriteReview = () => {
         navigate(`/review/${profname+'+'+profdepartment+'+'+pfppath}`);

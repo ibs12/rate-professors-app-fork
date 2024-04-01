@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
-
 function getDbConnection()
 {
     global $servername, $username, $password, $dbname;
@@ -62,12 +61,43 @@ function getSavedProfessors($userID, $conn)
 
 $conn = getDbConnection();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $userID = $_POST['userID'] ?? null;
-    $professorID = $_POST['professorID'] ?? null;
-    $action = $_POST['action'] ?? '';
+    $request_body = file_get_contents('php://input');
+    $data = json_decode($request_body, true);
 
-    if ($userID === null || $professorID === null) {
-        exit(json_encode(['error' => 'UserID and ProfessorID are required.']));
+    $sessionID = $data['sessionID'] ?? null;
+    $action = $data['action'] ?? '';
+    $professorName = $data['professorName'] ?? '';
+
+    if (!$sessionID) {
+        exit(json_encode(['error' => 'Session ID is missing.']));
+    }
+
+    // Query the `sessions` table to get the userID associated with the sessionID
+    $stmt = $conn->prepare("SELECT userID FROM `sessions` WHERE sessionID = ?");
+    $stmt->bind_param("s", $sessionID);
+    $stmt->execute();
+    $stmt->bind_result($userID);
+    $stmt->fetch();
+    $stmt->close();
+
+    if (!$userID) {
+        exit(json_encode(['error' => 'User not authenticated.']));
+    }
+
+    if (empty($professorName)) {
+        exit(json_encode(['error' => 'Professor name is required.']));
+    }
+
+    // Query the `professors` table to get the professor's ID based on the professor's name
+    $stmt = $conn->prepare("SELECT professorID FROM `professors` WHERE `professors` = ?");
+    $stmt->bind_param("s", $professorName);
+    $stmt->execute();
+    $stmt->bind_result($professorID);
+    $stmt->fetch();
+    $stmt->close();
+
+    if (!$professorID) {
+        exit(json_encode(['error' => 'Professor not found.']));
     }
 
     if ($action === 'save') {
