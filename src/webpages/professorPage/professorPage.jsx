@@ -3,6 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './ProfessorCard.css';
 import NavBar from '../navBar/NavBar';
 import defaultPic from "../../images/defaultPic.png";
+import savedIcon from "../../images/saved_icon.png";
+import savedIconColored from "../../images/saved_icon_colored.png";
+
+const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
+const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
 
 const importProfessorImage = (imagePath) => {
     try {
@@ -19,7 +25,10 @@ const ProfessorCard = () => {
     const { name } = useParams();
     const [profname, setProfName] = useState('');
     const [profdepartment, setProfDepartment] = useState('');
+    const [isSaved, setIsSaved] = useState(false);
+
     const [pfppath, setPfppath] = useState('');
+
 
     const [professorInfo, setProfessorInfo] = useState({
         name: '',
@@ -51,6 +60,43 @@ const ProfessorCard = () => {
             });
         }, 1000);
     };
+
+    const toggleSave = () => {
+        // Retrieve session ID from local storage
+        const sessionID = localStorage.getItem('sessionID');
+    
+        // If session ID is not found, handle the error
+        if (!sessionID) {
+            console.error('Session ID not found in local storage');
+            return;
+        }
+    
+        // Construct the request body
+        const requestBody = {
+            sessionID: sessionID,
+            professorName: profname, // Assuming profname contains the professor's name
+            action: isSaved ? 'remove' : 'save'
+        };
+    
+        // Send request to backend
+        fetch(`${apiUrl}/backend/saveProfessor/saveList.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Update saved status based on response
+                setIsSaved(!isSaved);
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
+    
 
     const handleWriteReview = () => {
         navigate(`/review/${profname+'+'+profdepartment+'+'+pfppath}`);
@@ -85,6 +131,13 @@ const ProfessorCard = () => {
         <div className='professor-main'>
             <NavBar/>
             <div className="professor-card">
+                <img
+                    src={isSaved ? savedIconColored : savedIcon}
+                    alt="Save Professor"
+                    className="saved-icon"
+                    onClick={toggleSave}
+                />
+
                 <img src={importProfessorImage(pfppath)} alt="Professor" className="professor-img" />
                 <div className="professor-info">
                     <h2>{professorInfo.name}</h2>
