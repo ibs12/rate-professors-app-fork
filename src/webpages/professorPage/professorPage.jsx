@@ -27,6 +27,11 @@ const ProfessorCard = () => {
     const [profdepartment, setProfDepartment] = useState('');
     const [isSaved, setIsSaved] = useState(false);
 
+    const toggleSave = () => {
+        setIsSaved(!isSaved);
+    };
+
+
     const [pfppath, setPfppath] = useState('');
 
 
