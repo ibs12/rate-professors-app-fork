@@ -102,7 +102,6 @@ const ProfessorCard = () => {
                     className="saved-icon"
                     onClick={toggleSave}
                 />
-                //<img src={professorInfo.profilePicture || defaultPic} alt="Professor" className="professor-img" />
 
                 <img src={importProfessorImage(pfppath)} alt="Professor" className="professor-img" />
                 <div className="professor-info">
