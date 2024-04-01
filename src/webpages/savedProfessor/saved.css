@@ -18,8 +18,8 @@
 }
 
 .professor-image {
-    width: 100px; /* Adjust as needed */
-    height: 100px; /* Adjust to maintain aspect ratio */
+    width: 125px; /* Adjust as needed */
+    height: 125px; /* Adjust to maintain aspect ratio */
     object-fit: cover;
     margin-right: 20px; /* Add some space between the image and the info */
 }

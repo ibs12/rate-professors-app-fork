@@ -1,7 +1,7 @@
 import React from 'react';
 import NavBar from '../navBar/NavBar';
 import './saved.css';
-import Default from '../../images/eye.png';
+import Default from '../../images/defaultPic.png';
 
 const Saved = () => {
   const professors = [
