@@ -2,24 +2,52 @@
     margin-left: 20vh;
     margin-right: 5vh;
 }
-
 .professor-card {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Align items to the start of the container */
+    justify-content: space-between; /* This will space out the child elements */
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     background-color: #ffffff2d;
-    margin-bottom: 20px; /* Space between cards or to the next content */
-
+    margin-bottom: 20px;
     width: 80%;
 }
 
-.professor-image {
+.professor-img {
     width: 125px; /* Adjust as needed */
     height: 125px; /* Adjust to maintain aspect ratio */
+    object-fit: cover;
+    margin-right: 40px; /* Increase space between image and info */
+}
+
+.professor-info {
+    flex-grow: 1; /* Allows the info section to take up remaining space */
+    text-align: center; /* Center the text */
+}
+
+.professor-name, .professor-department, .professor-rating {
+    margin: 0; /* Removes default margin */
+}
+
+.delete-icon {
+    cursor: pointer;
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+    margin-left: 20px; /* Space between info and delete icon */
+}
+
+.professor-info-container {
+    display: flex;
+    align-items: center;
+}
+
+
+
+.professor-image {
+    width: 100px; /* Adjust as needed */
+    height: 100px; /* Adjust to maintain aspect ratio */
     object-fit: cover;
     margin-right: 20px; /* Add some space between the image and the info */
 }
@@ -27,6 +55,8 @@
 .professor-info {
     padding: 0.5rem;
     flex-grow: 1; /* Make the info section take the remaining space */
+    padding-left: 20vh
+    
 }
 
 .professor-name {
