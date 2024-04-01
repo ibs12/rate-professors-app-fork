@@ -72,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit(json_encode(['error' => 'Session ID is missing.']));
     }
 
+
     // Query the `sessions` table to get the userID associated with the sessionID
     $stmt = $conn->prepare("SELECT userID FROM `sessions` WHERE sessionID = ?");
     $stmt->bind_param("s", $sessionID);
@@ -98,6 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!$professorID) {
         exit(json_encode(['error' => 'Professor not found.']));
+    }
+    if ($action === 'fetch') {
+        $savedProfessors = getSavedProfessors($userID, $conn);
+        exit(json_encode(['saved_professors' => $savedProfessors]));
     }
 
     if ($action === 'save') {
