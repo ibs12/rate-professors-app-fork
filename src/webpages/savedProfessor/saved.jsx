@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+
 import NavBar from '../navBar/NavBar';
 import './saved.css';
 import Default from '../../images/defaultPic.png';
+import TrashPic from '../../images/trash_bin.png';
 
 const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
@@ -51,7 +53,6 @@ const Saved = () => {
                 console.error('No saved professors found');
             }
         };
-
         fetchSavedProfessors();
     }, []);
   return (
@@ -73,6 +74,7 @@ const Saved = () => {
                   ))}
               </div>
           </div>
+
       </div>
   );
 };
