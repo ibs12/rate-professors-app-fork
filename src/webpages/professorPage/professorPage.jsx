@@ -3,12 +3,34 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './ProfessorCard.css';
 import NavBar from '../navBar/NavBar';
 import defaultPic from "../../images/defaultPic.png";
+import savedIcon from "../../images/saved_icon.png";
+import savedIconColored from "../../images/saved_icon_colored.png";
 
+
+const importProfessorImage = (imagePath) => {
+    try {
+      const images = require.context('../../images/professorpfp', false, /\.(png|jpe?g|svg)$/);
+      return images(`./${imagePath}`);
+    } catch (error) {
+        console.error('Failed to import image:', error);
+        return defaultPic;
+    }
+  };
+  
 const ProfessorCard = () => {
     const navigate = useNavigate();
     const { name } = useParams();
     const [profname, setProfName] = useState('');
     const [profdepartment, setProfDepartment] = useState('');
+    const [isSaved, setIsSaved] = useState(false);
+
+    const toggleSave = () => {
+        setIsSaved(!isSaved);
+    };
+
+
+    const [pfppath, setPfppath] = useState('');
+
 
     const [professorInfo, setProfessorInfo] = useState({
         name: '',
@@ -23,9 +45,10 @@ const ProfessorCard = () => {
     }, [name]);
     
     const fetchProfessorInfo = (Data) => {
-        const [name, department] = Data.split('+');
+        const [name, department,path] = Data.split('+');
         setProfName(name);
         setProfDepartment(department);
+        setPfppath(path);
         setTimeout(() => {
             setProfessorInfo({
                 name: name,
@@ -41,7 +64,7 @@ const ProfessorCard = () => {
     };
 
     const handleWriteReview = () => {
-        navigate(`/review/${profname+'+'+profdepartment}`);
+        navigate(`/review/${profname+'+'+profdepartment+'+'+pfppath}`);
     };
     const sortReviews = (sortBy) => {
         const sortedReviews = [...professorInfo.reviews].sort((a, b) => {
@@ -73,7 +96,14 @@ const ProfessorCard = () => {
         <div className='professor-main'>
             <NavBar/>
             <div className="professor-card">
-                <img src={professorInfo.profilePicture || defaultPic} alt="Professor" className="professor-img" />
+                <img
+                    src={isSaved ? savedIconColored : savedIcon}
+                    alt="Save Professor"
+                    className="saved-icon"
+                    onClick={toggleSave}
+                />
+
+                <img src={importProfessorImage(pfppath)} alt="Professor" className="professor-img" />
                 <div className="professor-info">
                     <h2>{professorInfo.name}</h2>
                     <p>{professorInfo.department}</p>

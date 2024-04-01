@@ -5,7 +5,6 @@ import SignUpPage from './webpages/signuppage/signuppage';
 import StartPage from './webpages/startpage/startpage';
 import AccountSettings from './webpages/accountsettings/accountsettings';
 import Homepage from './webpages/homepage/homepage';
-import Professors from "./webpages/professorPage/professorPage";
 import ProfessorPage from './webpages/professorPage/professorPage';
 import QuizPage from './webpages/quizPage/QuizPage';
 import Review from './webpages/Review/Review';
@@ -26,11 +25,11 @@ function App() {
             <Route path="/" element={<StartPage />} /> 
             {/* Wrap protected routes with ProtectedRoute component */}
             <Route path="/review/:name" element={<ProtectedRoute><Review /></ProtectedRoute>} />
-            <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
+            <Route path="/homepage" element={<Homepage />} />
             <Route path="/accountsettings" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
             <Route path="/professorPage" element={<ProtectedRoute><ProfessorPage /></ProtectedRoute>} />
             <Route path="/quizPage" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
-            <Route path="/professor/:name" element={<ProtectedRoute><ProfessorPage /></ProtectedRoute>} />
+            <Route path="/professor/:name" element={<ProfessorPage />} />
             {/* Assuming you want the search feature open to everyone in sprint 2, so it's not wrapped */}
             <Route path="/search" element={<Search />} />
             <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />
