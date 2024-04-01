@@ -69,6 +69,13 @@
     color: #000000;
     font-weight: 500px;
 }
+.delete-icon {
+    cursor: pointer;
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+    margin-left: 10px;
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

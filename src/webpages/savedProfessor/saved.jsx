@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NavBar from '../navBar/NavBar';
 import './saved.css';
 import Default from '../../images/defaultPic.png';
+import TrashPic from '../../images/trash_bin.png';
 
 const Saved = () => {
-  const professors = [
+  const [professors, setProfessors] = useState([
     {
         id: 1,
         name: 'John Doe',
         department: 'Computer Science',
         rating: '4.5',
-        image: Default // Placeholder image
+        image: Default
     },
     {
         id: 2,
@@ -26,7 +27,11 @@ const Saved = () => {
         rating: '4.2',
         image: Default
     }
-  ];
+  ]);
+
+  const removeProfessor = (id) => {
+    setProfessors(professors.filter(professor => professor.id !== id));
+  };
 
   return (
     <div>
@@ -42,6 +47,7 @@ const Saved = () => {
                     <p className="professor-department">{professor.department}</p>
                     <p className="professor-rating">Rating: {professor.rating}</p>
                 </div>
+                <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.id)} />
             </div>
           ))}
         </div>
