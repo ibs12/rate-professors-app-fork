@@ -34,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
-function getDbConnection()
-{
+// Get the database connection
+function getDbConnection() {
     global $servername, $username, $password, $dbname;
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -44,45 +44,37 @@ function getDbConnection()
     return $conn;
 }
 
-$conn = getDbConnection();
+// Main request handling
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_body = file_get_contents('php://input');
     $data = json_decode($request_body, true);
 
-    $sessionID = $data['sessionID'] ?? null;
+    $action = $data['action'] ?? null; // Retrieve the action from the decoded data
+
+    if ($action !== 'remove') {
+        exit(json_encode(['error' => 'Invalid action.']));
+    }
+
+    $userID = $data['userID'] ?? null;
     $professorID = $data['professorID'] ?? null;
 
-    if (!$sessionID) {
-        exit(json_encode(['error' => 'Session ID is missing.']));
+    if (!$userID || !$professorID) {
+        exit(json_encode(['error' => 'UserID and ProfessorID are required.']));
     }
 
-    // Query the `sessions` table to get the userID associated with the sessionID
-    $stmt = $conn->prepare("SELECT userID FROM `sessions` WHERE sessionID = ?");
-    $stmt->bind_param("s", $sessionID);
-    $stmt->execute();
-    $stmt->bind_result($userID);
-    $stmt->fetch();
-    $stmt->close();
+    $conn = getDbConnection();
 
-    if (!$userID) {
-        exit(json_encode(['error' => 'User not authenticated.']));
-    }
-
-    if (!$professorID) {
-        exit(json_encode(['error' => 'Professor ID is missing.']));
-    }
-
-    // Remove the specified professorID and userID from the database
+    // Remove the saved professor entry associated with the provided userID and professorID
     $stmt = $conn->prepare("DELETE FROM saved_professors WHERE userID = ? AND professorID = ?");
     $stmt->bind_param("ii", $userID, $professorID);
-    if ($stmt->execute()) {
-        $response = [
-            'message' => 'Professor removed successfully.'
-        ];
-        exit(json_encode($response));
-    } else {
-        exit(json_encode(['error' => 'Error removing professor.']));
-    }
-}
 
-$conn->close();
+    if ($stmt->execute()) {
+        exit(json_encode(['success' => 'Professor removed successfully.']));
+    } else {
+        exit(json_encode(['error' => 'Failed to remove the professor.']));
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
