@@ -8,14 +8,16 @@ import TrashPic from '../../images/trash_bin.png';
 const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
 const importProfessorImage = (imagePath) => {
-  try {
-    const images = require.context('../../images/professorpfp', false, /\.(png|jpeg|svg)$/);
-    return images(`./${imagePath}`);
-  } catch (error) {
-      console.error('Failed to import image:', error);
-      return Default;
-  }
+    try {
+      const filename = imagePath.split('/').pop(); // Extract the filename from the path
+      const images = require.context('../../images/professorpfp', false, /\.(png|jpeg|jpg|svg)$/);
+      return images('./' + filename);
+    } catch (error) {
+        console.error('Failed to import image:', error);
+        return Default;
+    }
   };
+  
 
 const Saved = () => {
     const [professors, setProfessors] = useState([]);
