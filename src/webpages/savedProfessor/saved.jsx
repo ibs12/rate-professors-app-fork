@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import NavBar from '../navBar/NavBar';
 import './saved.css';
 import Default from '../../images/defaultPic.png';
@@ -16,8 +15,7 @@ const importProfessorImage = (imagePath) => {
         console.error('Failed to import image:', error);
         return Default;
     }
-  };
-  
+};
 
 const Saved = () => {
     const [professors, setProfessors] = useState([]);
@@ -59,42 +57,45 @@ const Saved = () => {
     }, []);
 
     const removeProfessor = async (professorID) => {
-      const requestBody = { userID: localStorage.getItem('userID'), professorID: professorID, action: 'remove' };
-      const response = await fetch(`${apiUrl}/backend/saveProfessor/fetchSaved.php`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody)
-      });
+        const userID = localStorage.getItem('userID');
+        const requestBody = { userID: userID, professorID: professorID, action: 'remove' };
+        const response = await fetch(`${apiUrl}/backend/saveProfessor/removeSaved.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+    
+        if (response.ok) {
+            // Remove the professor from the state
+            setProfessors(professors.filter(professor => professor.professorID !== professorID));
+        } else {
+            console.error('Failed to delete the professor');
+        }
+    };    
 
-      if (response.ok) {
-          setProfessors(professors.filter(professor => professor.professorID !== professorID));
-      } else {
-          console.error('Failed to delete the professor');
-      }
-  };
-  return (
-    <div>
-        <NavBar />
-        <div className="page-content">
-            <h1 className="page-title">Saved Professors</h1>
-            <div className="saved-professors-container">
-                {professors.map((professor, index) => (
-                    <div key={index} className="professor-card">
-                        <div className="professor-info-container">
-                            <img src={importProfessorImage(professor.pfppath)} alt="Professor" className="professor-img" onError={(e) => e.target.src = Default} />
-                            <div className="professor-info">
-                                <h2 className="professor-name">{professor.professors}</h2>
-                                <p className="professor-department">{professor.department}</p>
-                                <p className="professor-rating">Rating: {professor.rating || 'Not Rated'}</p>
+    return (
+        <div>
+            <NavBar />
+            <div className="page-content">
+                <h1 className="page-title">Saved Professors</h1>
+                <div className="saved-professors-container">
+                    {professors.map((professor, index) => (
+                        <div key={index} className="professor-card">
+                            <div className="professor-info-container">
+                                <img src={importProfessorImage(professor.pfppath)} alt="Professor" className="professor-img" onError={(e) => e.target.src = Default} />
+                                <div className="professor-info">
+                                    <h2 className="professor-name">{professor.professors}</h2>
+                                    <p className="professor-department">{professor.department}</p>
+                                    <p className="professor-rating">Rating: {professor.rating || 'Not Rated'}</p>
+                                </div>
                             </div>
+                            <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
                         </div>
-                        <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
 };
 
 export default Saved;
