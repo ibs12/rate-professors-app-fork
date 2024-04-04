@@ -19,6 +19,8 @@
                     Feedback_Quality: document.getElementById('Feedback_Quality').value,
                     accessibility: document.getElementById('accessibility').value,
                     comment: document.getElementById('comment').value,
+                    course: document.getElementById('course').value, // New
+                    term: document.getElementById('term').value, // New
                 };
 
                 fetch('createReview.php', {
@@ -49,6 +51,10 @@
         <input type="number" id="userID" name="userID" required><br>
         <label for="professorID">Professor ID:</label><br>
         <input type="number" id="professorID" name="professorID" required><br>
+        <label for="course">Course:</label><br>
+        <input type="text" id="course" name="course" required><br>
+        <label for="term">Term:</label><br>
+        <input type="text" id="term" name="term" required><br>
         <label for="difficulty">Difficulty (1-5):</label><br>
         <input type="number" id="difficulty" name="difficulty" min="1" max="5" required><br>
         <label for="helpfulness">Helpfulness (1-5):</label><br>
@@ -61,6 +67,8 @@
         <input type="number" id="accessibility" name="accessibility" min="1" max="5" required><br>
         <label for="comment">Comment:</label><br>
         <textarea id="comment" name="comment" rows="4" required></textarea><br>
+
+
         <input type="submit" value="Submit Review">
     </form>
 </body>

@@ -1,9 +1,4 @@
 <?php
-header('Content-Type: application/json');
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-header('X-Content-Type-Options: nosniff');
 require_once '../db_config.php';
 
 // Define an array of allowed origins

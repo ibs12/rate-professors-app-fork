@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    // Assuming all keys exist in the $data array and are of the expected type
+    // Filter and sanitize the inputs
     $userId = filter_var($data['userID'], FILTER_SANITIZE_NUMBER_INT);
     $professorId = filter_var($data['professorID'], FILTER_SANITIZE_NUMBER_INT);
     $difficulty = filter_var($data['difficulty'], FILTER_SANITIZE_NUMBER_INT);
@@ -63,6 +63,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $feedbackQuality = filter_var($data['Feedback_Quality'], FILTER_SANITIZE_NUMBER_INT);
     $accessibility = filter_var($data['accessibility'], FILTER_SANITIZE_NUMBER_INT);
     $comment = htmlspecialchars($data['comment'], ENT_QUOTES, 'UTF-8');
+    $course = htmlspecialchars($data['course'], ENT_QUOTES, 'UTF-8'); // New
+    $term = htmlspecialchars($data['term'], ENT_QUOTES, 'UTF-8'); // New
 
     if (!$userId || !$professorId) {
         http_response_code(400);
@@ -71,12 +73,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $conn = getDbConnection();
-    $stmt = $conn->prepare("INSERT INTO prof_reviews (userID, professorID, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("iiiiiiis", $userId, $professorId, $difficulty, $helpfulness, $clarity, $feedbackQuality, $accessibility, $comment);
+    $stmt = $conn->prepare("INSERT INTO prof_reviews (userID, professorID, course, term, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    // Corrected bind_param line:
+    $stmt->bind_param("iissiiiiis", $userId, $professorId, $course, $term, $difficulty, $helpfulness, $clarity, $feedbackQuality, $accessibility, $comment);
+
 
     if ($stmt->execute()) {
-        // Optionally, fetch last inserted ID or any other relevant data
-        // $lastId = $conn->insert_id;
         echo json_encode(["message" => "New review added successfully.", "status" => "success"]);
     } else {
         http_response_code(500);
