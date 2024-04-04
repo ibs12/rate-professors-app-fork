@@ -73,21 +73,27 @@ const Saved = () => {
         }
     };    
 
-    return (
-        <div>
-            <NavBar />
-            <div className="page-content">
-                <h1 className="page-title">Saved Professors</h1>
-                <div className="saved-professors-container">
-                    {professors.map((professor, index) => (
-                        <div key={index} className="professor-card">
-                            <div className="professor-info-container">
-                                <img src={importProfessorImage(professor.pfppath)} alt="Professor" className="professor-img" onError={(e) => e.target.src = Default} />
-                                <div className="professor-info">
-                                    <h2 className="professor-name">{professor.professors}</h2>
-                                    <p className="professor-department">{professor.department}</p>
-                                    <p className="professor-rating">Rating: {professor.rating || 'Not Rated'}</p>
-                                </div>
+      if (response.ok) {
+          setProfessors(professors.filter(professor => professor.professorID !== professorID));
+      } else {
+          console.error('Failed to delete the professor');
+      }
+  };
+  return (
+    <div>
+        <NavBar />
+        <div className="page-content">
+            <h1 className="page-title">Saved Professors</h1>
+            <div className="saved-professors-container">
+                {professors.map((professor, index) => (
+                    <div key={index} className="saved-professor-cards">
+                        <div className="saved-professor-infos-container">
+                            <img src={importProfessorImage(professor.pfppath)} alt="Professor" className="saved-professor-img" onError={(e) => e.target.src = Default} />
+                            <div className="saved-professor-infos">
+                                <h2 className="saved-professor-name">{professor.professors}</h2>
+                                <p className="saved-professor-department">{professor.department}</p>
+                                <p className="saved-professor-rating">Rating: {professor.rating || 'Not Rated'}</p>
+
                             </div>
                             <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
                         </div>
