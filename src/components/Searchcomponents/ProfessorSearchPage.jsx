@@ -38,7 +38,7 @@ const ProfessorSearchPage = ({ professors }) => {
           </div>
           <div className="search-right-section">
             <h2 className="search-professor-name">
-              <Link to={{ pathname: `/professor/${ professor.name + '+' + professor.department +'+'+professor.pfppath.split('/').pop()}` }}>
+              <Link to={{ pathname: `/professor/${ professor.name + '+' + professor.department +'+'+professor.pfppath.split('/').pop()}`+'+'+professor.professorID}}>
                 {professor.name}
               </Link>
             </h2>

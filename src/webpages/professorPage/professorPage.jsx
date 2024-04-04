@@ -25,6 +25,7 @@ const ProfessorCard = () => {
     const { name } = useParams();
     const [profname, setProfName] = useState('');
     const [profdepartment, setProfDepartment] = useState('');
+    const [ID, setProid] = useState('');
     const [isSaved, setIsSaved] = useState(false);
 
 
@@ -45,10 +46,11 @@ const ProfessorCard = () => {
     }, [name]);
     
     const fetchProfessorInfo = (Data) => {
-        const [name, department,path] = Data.split('+');
+        const [name, department,path,ID] = Data.split('+');
         setProfName(name);
         setProfDepartment(department);
         setPfppath(path);
+        setProid(ID)
         setTimeout(() => {
             setProfessorInfo({
                 name: name,
@@ -101,7 +103,7 @@ const ProfessorCard = () => {
     
 
     const handleWriteReview = () => {
-        navigate(`/review/${profname+'+'+profdepartment+'+'+pfppath}`);
+        navigate(`/review/${profname+'+'+profdepartment+'+'+pfppath+'+'+ID}`);
     };
     const sortReviews = (sortBy) => {
         const sortedReviews = [...professorInfo.reviews].sort((a, b) => {
