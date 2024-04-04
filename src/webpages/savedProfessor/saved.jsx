@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import NavBar from '../navBar/NavBar';
 import './saved.css';
 import Default from '../../images/defaultPic.png';
@@ -8,14 +7,15 @@ import TrashPic from '../../images/trash_bin.png';
 const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
 const importProfessorImage = (imagePath) => {
-  try {
-    const images = require.context('../../images/professorpfp', false, /\.(png|jpeg|svg)$/);
-    return images(`./${imagePath}`);
-  } catch (error) {
-      console.error('Failed to import image:', error);
-      return Default;
-  }
-  };
+    try {
+      const filename = imagePath.split('/').pop(); // Extract the filename from the path
+      const images = require.context('../../images/professorpfp', false, /\.(png|jpeg|jpg|svg)$/);
+      return images('./' + filename);
+    } catch (error) {
+        console.error('Failed to import image:', error);
+        return Default;
+    }
+};
 
 const Saved = () => {
     const [professors, setProfessors] = useState([]);
@@ -57,12 +57,21 @@ const Saved = () => {
     }, []);
 
     const removeProfessor = async (professorID) => {
-      const requestBody = { userID: localStorage.getItem('userID'), professorID: professorID, action: 'remove' };
-      const response = await fetch(`${apiUrl}/backend/saveProfessor/fetchSaved.php`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody)
-      });
+        const userID = localStorage.getItem('userID');
+        const requestBody = { userID: userID, professorID: professorID, action: 'remove' };
+        const response = await fetch(`${apiUrl}/backend/saveProfessor/removeSaved.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+    
+        if (response.ok) {
+            // Remove the professor from the state
+            setProfessors(professors.filter(professor => professor.professorID !== professorID));
+        } else {
+            console.error('Failed to delete the professor');
+        }
+    };    
 
       if (response.ok) {
           setProfessors(professors.filter(professor => professor.professorID !== professorID));
@@ -84,15 +93,15 @@ const Saved = () => {
                                 <h2 className="saved-professor-name">{professor.professors}</h2>
                                 <p className="saved-professor-department">{professor.department}</p>
                                 <p className="saved-professor-rating">Rating: {professor.rating || 'Not Rated'}</p>
+
                             </div>
+                            <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
                         </div>
-                        <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
 };
 
 export default Saved;

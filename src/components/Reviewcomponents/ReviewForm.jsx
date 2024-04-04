@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams,useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './ReviewForm.css';
 import defaultPic from './Unknown.jpeg';
 
@@ -29,12 +29,14 @@ const ReviewForm = ({ professorImage }) => {
   const [profName, setProfName] = useState('');
   const [department, setDepartment] = useState('');
   const [pfppath, setPfppath] = useState('');
+  const [ID, setProid] = useState('');
 
   useEffect(() => {
-    const [profNameParam, departmentParam,path] = name.split('+');
+    const [profNameParam, departmentParam, path,ID] = name.split('+');
     setProfName(profNameParam);
     setDepartment(departmentParam);
     setPfppath(path);
+    setProid(ID);
   }, [name]);
 
   const handleInputChange = (e) => {
@@ -47,14 +49,54 @@ const ReviewForm = ({ professorImage }) => {
       setCharCount(value.length);
     }
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.course || !formData.term || !formData.difficulty || !formData.helpfulness || !formData.clarity || !formData.feedback || !formData.comment) {
+    if (!formData.course || !formData.term || !formData.difficulty || !formData.helpfulness || !formData.clarity || !formData.feedback || !formData.accessibility|| !formData.comment) {
       alert('You must fill out all fields.');
       return;
     }
-    navigate(`/professor/${profName+'+'+department+'+'+pfppath}`);
+
+const reviewData = {
+  userID: localStorage.getItem('userID'), // Assuming you store userID in localStorage after login
+  professorID: ID, // Assuming professorID is derived from pfppath
+  difficulty: formData.difficulty,
+  helpfulness: formData.helpfulness,
+  clarity: formData.clarity,
+  Feedback_Quality: formData.feedback, // Assuming it's Feedback_Quality in PHP
+  accessibility: formData.accessibility, // You need to handle this in your form
+  comment: formData.comment,
+  course: formData.course === 'add' ? formData.newCourse : formData.course, // If course is 'add', use newCourse, otherwise use course
+  term: formData.term === 'add' ? formData.newTerm : formData.term // If term is 'add', use newTerm, otherwise use term
+};
+
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
+    fetch(`${apiUrl}/backend/createReview/createReview.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('sessionID')}` // Assuming you have a sessionID after login
+      },
+      body: JSON.stringify(reviewData)
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to submit review');
+        }
+      })
+      .then(data => {
+        // Handle success response, if needed
+        alert('Review submitted successfully');
+        navigate(`/professor/${profName + '+' + department + '+' + pfppath+'+'+ID}`);
+      })
+      .catch(error => {
+        // Handle error
+        console.error('Review submission error:', error);
+        alert('Failed to submit review. Please try again.');
+      });
   };
 
   const handleCancel = () => {
@@ -71,7 +113,7 @@ const ReviewForm = ({ professorImage }) => {
         comment: ''
       });
       setCharCount(0);
-      navigate(`/professor/${profName+'+'+department+'+'+pfppath}`);
+      navigate(`/professor/${profName + '+' + department + '+' + pfppath+'+'+ID}`);
     }
   };
 
@@ -144,6 +186,17 @@ const ReviewForm = ({ professorImage }) => {
                 <option value="5">5</option>
               </select>
             </div>
+            <div className="review-page-form-group">
+              <label htmlFor="accessibility">Accessibility:</label>
+              <select id="accessibility" name="accessibility" value={formData.accessibility} onChange={handleInputChange}>
+                <option value="">-- Select Accessibility: --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
           </form>
         </div>
         <div className="review-page-professor-info">
@@ -171,4 +224,3 @@ const ReviewForm = ({ professorImage }) => {
 };
 
 export default ReviewForm;
-
