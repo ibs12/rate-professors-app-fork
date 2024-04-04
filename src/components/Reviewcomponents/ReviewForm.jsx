@@ -224,4 +224,3 @@ const reviewData = {
 };
 
 export default ReviewForm;
-
