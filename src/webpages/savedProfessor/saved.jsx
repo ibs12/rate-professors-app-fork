@@ -73,15 +73,9 @@ const Saved = () => {
         }
     };    
 
-      if (response.ok) {
-          setProfessors(professors.filter(professor => professor.professorID !== professorID));
-      } else {
-          console.error('Failed to delete the professor');
-      }
-  };
-  return (
-    <div>
-        <NavBar />
+    return (
+<div>
+    <NavBar />
         <div className="page-content">
             <h1 className="page-title">Saved Professors</h1>
             <div className="saved-professors-container">
@@ -93,14 +87,14 @@ const Saved = () => {
                                 <h2 className="saved-professor-name">{professor.professors}</h2>
                                 <p className="saved-professor-department">{professor.department}</p>
                                 <p className="saved-professor-rating">Rating: {professor.rating || 'Not Rated'}</p>
-
                             </div>
-                            <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
                         </div>
-                    ))}
-                </div>
+                        <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
+                    </div>
+                ))}
             </div>
         </div>
+    </div>
     );
 };
 

@@ -20,6 +20,8 @@
     height: 125px; /* Adjust to maintain aspect ratio */
     object-fit: cover;
     margin-right: 40px; /* Increase space between image and infos */
+    border-radius: 50%;
+
 }
 
 .saved-professor-infos {
