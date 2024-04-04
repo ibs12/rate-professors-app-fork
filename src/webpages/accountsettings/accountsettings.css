@@ -227,3 +227,17 @@
 }
 
 
+/* AccountSettingsPage.css */
+
+/* Existing styles for larger screens... */
+
+/* Styles specific for screens up to 425px wide */
+@media (max-width: 425px) {
+
+
+    .left-side, .right-side {
+        height:150vh;
+    }
+
+
+}

@@ -2,7 +2,7 @@
     margin-left: 20vh;
     margin-right: 5vh;
 }
-.professor-card {
+.saved-professor-cards {
     display: flex;
     align-items: center;
     justify-content: space-between; /* This will space out the child elements */
@@ -15,19 +15,19 @@
     width: 80%;
 }
 
-.professor-img {
+.saved-professor-img {
     width: 125px; /* Adjust as needed */
     height: 125px; /* Adjust to maintain aspect ratio */
     object-fit: cover;
-    margin-right: 40px; /* Increase space between image and info */
+    margin-right: 40px; /* Increase space between image and infos */
 }
 
-.professor-info {
-    flex-grow: 1; /* Allows the info section to take up remaining space */
+.saved-professor-infos {
+    flex-grow: 1; /* Allows the infos section to take up remaining space */
     text-align: center; /* Center the text */
 }
 
-.professor-name, .professor-department, .professor-rating {
+.saved-professor-name, .saved-professor-department, .saved-professor-rating {
     margin: 0; /* Removes default margin */
 }
 
@@ -35,36 +35,36 @@
     cursor: pointer;
     width: 50px; /* Adjust size as needed */
     height: 50px; /* Adjust size as needed */
-    margin-left: 20px; /* Space between info and delete icon */
+    margin-left: 20px; /* Space between infos and delete icon */
 }
 
-.professor-info-container {
+.saved-professor-infos-container {
     display: flex;
     align-items: center;
 }
 
 
 
-.professor-image {
+.saved-professor-image {
     width: 100px; /* Adjust as needed */
     height: 100px; /* Adjust to maintain aspect ratio */
     object-fit: cover;
-    margin-right: 20px; /* Add some space between the image and the info */
+    margin-right: 20px; /* Add some space between the image and the infos */
 }
 
-.professor-info {
+.saved-professor-infos {
     padding: 0.5rem;
-    flex-grow: 1; /* Make the info section take the remaining space */
+    flex-grow: 1; /* Make the infos section take the remaining space */
     padding-left: 20vh
     
 }
 
-.professor-name {
+.saved-professor-name {
     margin: 0;
     font-size: 1.2rem;
 }
 
-.professor-department, .professor-rating {
+.saved-professor-department, .saved-professor-rating {
     margin: 0;
     font-size: 1rem;
 }
@@ -78,23 +78,23 @@
     margin: 20px 0;
 }
 
-.professor-info h2, .professor-info p, .professor-rating span {
+.saved-professor-infos h2, .saved-professor-infos p, .saved-professor-rating span {
     margin: 0;
     padding: 0;
     
 }
 
-.professor-info h2 {
+.saved-professor-infos h2 {
     color: #333;
     font-size: 35px;
 }
 
-.professor-info p {
+.saved-professor-infos p {
     color: #666;
     font-size: 25px;
 }
 
-.professor-rating span {
+.saved-professor-rating span {
     font-size:50pt;
     color: #000000;
     font-weight: 500px;
@@ -110,18 +110,86 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .saved-professors-container {
-        margin-left: 10vh;
+        margin-left: 5vh;
         margin-right: 2vh;
+        
     }
 
-    .professor-card {
-        flex-direction: column;
-        align-items: flex-start;
+    .saved-professor-cards {
+        padding: 15px; /* Adjust padding for smaller screens */
+        margin-left:5vh;
     }
 
-    .professor-image {
-        width: 100%;
-        height: auto;
-        margin-right: 0; /* Remove margin in smaller devices */
+    .saved-professor-img,
+    .saved-professor-image {
+        width: 80px; /* Reduce the image size on smaller screens */
+        height: 80px; /* Keep the aspect ratio consistent */
+        margin-right: 0; /* Since items are stacked, right margin is not needed */
+        margin-bottom: 10px; /* Space between image and the text below */
+    }
+
+    .saved-professor-infos h2,
+    .saved-professor-infos p,
+    .saved-professor-rating span {
+        font-size: 1rem; /* Adjust font size for smaller screens */
+    }
+
+    .page-title {
+        padding-left: 100px; /* Adjusted for smaller screens */
+        font-size: 1.5rem;
+    }
+
+    .saved-professor-infos {
+        padding-left: 0px; /* Reset padding for smaller screens */
+        margin-left: 10vh;
+    }
+
+    .delete-icon {
+        width: 30px; /* Adjust delete icon size for smaller screens */
+        height: 30px;
+        margin-left: 10px; /* Adjust margin around the delete icon */
+    }
+}
+
+@media (max-width: 425px) {
+    .saved-professors-container {
+        margin-left: 3vh;
+        margin-right: 1vh;
+        
+    }
+
+    .saved-professor-cards {
+        padding: 10px; /* Adjust padding for smaller screens */
+        margin-left: 2vh;
+    }
+
+    .saved-professor-img,
+    .saved-professor-image {
+        width: 80px; /* Reduce the image size on smaller screens */
+        height: 80px; /* Keep the aspect ratio consistent */
+        margin-right: 0; /* Since items are stacked, right margin is not needed */
+        margin-bottom: 10px; /* Space between image and the text below */
+    }
+
+    .saved-professor-infos h2,
+    .saved-professor-infos p,
+    .saved-professor-rating span {
+        font-size: 1rem; /* Adjust font size for smaller screens */
+    }
+
+    .page-title {
+        padding-left: 50px; /* Adjusted for smaller screens */
+        font-size: 1.5rem;
+    }
+
+    .saved-professor-infos {
+        padding-left: 0px; /* Reset padding for smaller screens */
+        margin-left: 3vh;
+    }
+
+    .delete-icon {
+        width: 30px; /* Adjust delete icon size for smaller screens */
+        height: 30px;
+        margin-left: 10px; /* Adjust margin around the delete icon */
     }
 }

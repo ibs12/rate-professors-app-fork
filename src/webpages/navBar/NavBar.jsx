@@ -1,132 +1,93 @@
 import React, { useState } from 'react';
 import './NavBar.css'; // Ensure this CSS file is properly linked
 import Logo from "../../images/Logo.png";
-import MenuIcon from "../../images/menu(white).png"; // Verify the path to your image
-import { Link,useNavigate } from 'react-router-dom';
-import { useAuth } from '../../AuthContext'; // Import useAuth hook
-
-
+import MenuIcon from "../../images/menu(white).png";
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../AuthContext';
 
 function NavBar() {
     const [isMenuVisible, setIsMenuVisible] = useState(false);
-    const { setIsAuthenticated , checkAuth} = useAuth();        
+    const { setIsAuthenticated } = useAuth();
+    const navigate = useNavigate();
 
-    const navigate= useNavigate();
     const toggleMenu = () => {
-        setIsMenuVisible(!isMenuVisible);
-        console.log("Menu visibility toggled:", isMenuVisible); // Debug: Check menu toggle
+        setIsMenuVisible(prevState => !prevState);  // Correctly toggle the state
     };
+
+
     const handleLogout = async () => {
-        console.log("Initiating logout process"); // Debug: Initiate logout
-    
-        // Retrieve session data from session storage
+        console.log("Initiating logout process");
+
         const email = localStorage.getItem('email');
         const sessionID = localStorage.getItem('sessionID');
         const userID = localStorage.getItem('userID');
-        console.log("Retrieved session data:", { email, sessionID, userID }); // Debug: Check retrieved session data
-    
-        const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
+        console.log("Retrieved session data:", { email, sessionID, userID });
+
         const apiUrl = process.env.REACT_APP_API_BASE_URL;
-    
 
         if (email && sessionID && userID) {
-            console.log("Session data exists. Proceeding with logout."); // Debug: Session data check
+            console.log("Session data exists. Proceeding with logout.");
             try {
-                console.log("Step 1."); // Debug: Session data check
-
                 const response = await fetch(`${apiUrl}/backend/logout/logout.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, sessionID, userID, action: 'logout'}),
+                    body: JSON.stringify({ email, sessionID, userID, action: 'logout' }),
                 });
-                console.log("Raw response:", response); 
-    
-                // Check if the response status is OK before trying to parse the JSON
+
                 if (response.ok) {
-                    const data = await response.json(); // Parsing JSON from the response
-                    console.log("Logout response:", data); // Debug: Check logout response
-                    
-                    console.log("Logout successful:", data.message); // Debug: Successful logout
-                    // Clear session data from session storage
+                    const data = await response.json();
+                    console.log("Logout response:", data);
+
                     localStorage.removeItem('email');
                     localStorage.removeItem('sessionID');
                     localStorage.removeItem('userID');
-                    console.log("deleted"); // Debug: Initiate logout
 
-                    // Redirect the user or update the UI as needed
                     setIsAuthenticated(false);
-                    navigate('/signinpage') // Use window.location.href for redirection
+                    navigate('/signinpage');
                 } else {
-                    // If response is not ok, logging the status and statusText
                     console.error("Logout failed with status:", response.status, response.statusText);
                 }
             } catch (error) {
-                console.error('Logout error caught:', error); // Debug: Catch logout error
+                console.error('Logout error caught:', error);
             }
         } else {
-            console.log("No active session found. Redirecting to login page."); // Debug: No session data
-            navigate('/signin') // Use window.location.href for redirection
+            console.log("No active session found. Redirecting to login page.");
+            navigate('/signin');
         }
-    };    
-
+    };
 
     return (
-        <nav style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: '#005bbb',
-            color: 'white',
-            padding: '0.5rem 1rem',
-            position: 'fixed',
-            top: '0',
-            left: '0',
-            width: '100%',
-            zIndex: 1000,
-        }}>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-                <img src={Logo} alt="Logo" style={{height: '40px', marginRight: '1rem'}} />
+        <nav className="navbar">
+            <div>
+                <img src={Logo} alt="Logo" className="navbar-logo" />
             </div>
-            <div style={{ cursor: 'pointer' }}>
-                <img src={MenuIcon} alt="Menu" style={{height: '40px', marginRight: '1.5rem'}} onClick={toggleMenu} />
+            <div onClick={toggleMenu} className="navbar-menu-icon-container">
+                <img src={MenuIcon} alt="Menu" className="navbar-menu-icon" />
             </div>
-            {isMenuVisible && (
-                <div style={{
-                    position: 'absolute',
-                    top: '100%',
-                    right: '0',
-                    backgroundColor: 'white',
-                    color: '#005bbb',
-                    padding: '1.5rem',
-                    boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)',
-                    zIndex: 1,
-                }}>
-                    <ul style={{ listStyle: 'none', padding: 0 }}>
-                        <li style={{marginBottom: '0.5rem'}}>
-                            <Link to="/homepage" style={{ color: '#005bbb', textDecoration: 'none' }}>
-                                Homepage
-                            </Link>
-                        </li>
-                        <li style={{marginBottom: '0.5rem'}}>
-                            <Link to="/saved" style={{ color: '#005bbb', textDecoration: 'none' }}>
-                                Saved
-                            </Link>
-                        </li>
-                        <li style={{marginBottom: '0.5rem'}}>
-                            <Link to="/accountsettings" style={{ color: '#005bbb', textDecoration: 'none' }}>
-                                Account Settings
-                            </Link>
-                        </li>
-                        <li style={{marginBottom: '0.5rem'}}>
-                            <button onClick={handleLogout} style={{ color: '#005bbb', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}>
-                                Logout
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            )}
+            <div className={`navbar-menu ${isMenuVisible ? 'active' : ''}`}>
+                <ul style={{ listStyle: 'none', padding: 0 }}>
+                    <li>
+                        <Link to="/homepage" className="navbar-menu-item">
+                            Homepage
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/saved" className="navbar-menu-item">
+                            Saved
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/accountsettings" className="navbar-menu-item">
+                            Account Settings
+                        </Link>
+                    </li>
+                    <li className="navbar-menu-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                        Logout
+                    </li>
+                </ul>
+            </div>
         </nav>
     );
 }

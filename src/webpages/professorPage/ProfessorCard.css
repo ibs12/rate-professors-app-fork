@@ -150,4 +150,80 @@
 
 
 
+/* Styles for tablets and smaller devices (up to 768px) */
+@media (max-width: 768px) {
+    .professor-main {
+        padding-top: 7vh;
+        margin-left: 10vh;
+        margin-right: 7vh;
+    }
 
+    .professor-card, .review {
+        width: 95%;
+    }
+
+    .professor-rating span{
+        font-weight: 30pt;
+    }
+
+    .professor-img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .saved-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .professor-info h2 {
+        font-size: 30px;
+    }
+
+    .professor-info p, .review p {
+        font-size: 20px;
+    }
+}
+
+/* Styles for mobile devices (up to 425px) */
+@media (max-width: 425px) {
+    .professor-main {
+        padding-top: 7vh;
+        margin-left: 2vh;
+        margin-right: 1vh;
+    }
+
+    .professor-content, .review {
+        display: block;
+    }
+
+    .professor-card, .review {
+        width: 90%;
+    }
+
+    .professor-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .saved-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .professor-info h2 {
+        font-size: 25px;
+    }
+
+    .professor-info p, .review p {
+        font-size: 18px;
+    }
+
+    .professor-rating span {
+        font-size: 30pt; /* Adjusted font size for smaller screens */
+    }
+
+    .sort-button-container, .write-review-container {
+        display: block;
+    }
+}

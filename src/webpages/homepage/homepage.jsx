@@ -49,7 +49,7 @@ const Homepage = () => {
           <input
             className="search-input"
             type="text"
-            placeholder="Enter a Professor"
+            placeholder="Enter a Professor or Class"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -65,10 +65,12 @@ const Homepage = () => {
             <img src={SearchIcon} alt="Search" />
           </button>
         </div>
-        {searchError && <p>{searchError}</p>}
+        {searchError && <p className="error-message">{searchError}</p>}
       </div>
     </div>
   );
 };
+
+
 
 export default Homepage;

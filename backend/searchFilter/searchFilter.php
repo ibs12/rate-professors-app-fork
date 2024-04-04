@@ -55,7 +55,7 @@ $likePatterns = array_unique($typoVariations);
 if ($filter === 'professors') {
     $sqlPatterns = implode("%' OR professors LIKE '%", $likePatterns);
     // Assuming all columns are to be fetched, explicitly listing them for clarity and security
-    $sql = "SELECT professors, education, department, classes, research, email, office, phone, pfppath, difficulty, helpfulness, clarity, `Feedback Quality`, accessibility, (CASE WHEN professors LIKE '%$searchQuery%' THEN 1 ELSE 0 END) AS exactMatch FROM professors WHERE professors LIKE '%$sqlPatterns%'";
+    $sql = "SELECT professors, education, department, classes, research, email, office, phone, pfppath, difficulty, helpfulness, clarity, `Feedback_Quality`, accessibility, (CASE WHEN professors LIKE '%$searchQuery%' THEN 1 ELSE 0 END) AS exactMatch FROM professors WHERE professors LIKE '%$sqlPatterns%'";
 } elseif ($filter === 'classes') {
     $sqlPatterns = implode("%' OR class_title LIKE '%", $likePatterns);
     // Modify this if you have a similar structure for classes and want to fetch specific details
