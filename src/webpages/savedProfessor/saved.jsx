@@ -86,7 +86,7 @@ const Saved = () => {
                             <div className="saved-professor-infos">
                                 <h2 className="saved-professor-name">{professor.professors}</h2>
                                 <p className="saved-professor-department">{professor.department}</p>
-                                <p className="saved-professor-rating">Rating: {professor.rating || 'Not Rated'}</p>
+                                <p className="saved-professor-rating">Rating: {professor.rating || '-/5'}</p>
                             </div>
                         </div>
                         <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
