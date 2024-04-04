@@ -41,6 +41,9 @@ const ReviewForm = ({ professorImage }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'comment' && value.length > 500) {
+      return; 
+    }
     setFormData({
       ...formData,
       [name]: value
