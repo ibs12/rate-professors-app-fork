@@ -6,8 +6,8 @@ import defaultPic from "../../images/defaultPic.png";
 import savedIcon from "../../images/saved_icon.png";
 import savedIconColored from "../../images/saved_icon_colored.png";
 
-const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
-const apiUrl = process.env.REACT_APP_API_BASE_URL;
+const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+const apiUrl = "http://localhost:8000";
 
 const importProfessorImage = (imagePath) => {
     try {
@@ -50,7 +50,7 @@ const ProfessorCard = () => {
             professorID: ID
         };
     
-        fetch(`${apiUrl}/backend/searchFilter/searchprofessorreviews.php`, {
+        fetch(`${webServerUrl}/backend/searchFilter/searchprofessorreviews.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -112,7 +112,7 @@ const ProfessorCard = () => {
             action: isSaved ? 'remove' : 'save'
         };
 
-        fetch(`${apiUrl}/backend/saveProfessor/saveList.php`, {
+        fetch(`${webServerUrl}/backend/saveProfessor/saveList.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

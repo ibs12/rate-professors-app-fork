@@ -11,8 +11,8 @@ const Homepage = () => {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL;
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+    const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+    const apiUrl = "http://localhost:8000";
 
     if (searchTerm.trim() !== '') {
       if (filter === 'classes') {
@@ -21,7 +21,7 @@ const Homepage = () => {
         return; // Exit the function, don't proceed with the search
       }
 
-      fetch(`${apiUrl}/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
+      fetch(`${webServerUrl}/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');

@@ -26,11 +26,10 @@ function Main() {
       email: email,
       password: password
     };
+    const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+    const apiUrl = "http://localhost:8000";
 
-    const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
-    
-    fetch(`${apiUrl}/backend/login/login.php`, {
+    fetch(`${webServerUrl}/backend/login/login.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

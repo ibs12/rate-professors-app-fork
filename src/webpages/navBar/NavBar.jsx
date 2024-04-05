@@ -23,12 +23,12 @@ function NavBar() {
         const userID = localStorage.getItem('userID');
         console.log("Retrieved session data:", { email, sessionID, userID });
 
-        const apiUrl = process.env.REACT_APP_API_BASE_URL;
-
+        const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+        const apiUrl = "http://localhost:8000";
         if (email && sessionID && userID) {
             console.log("Session data exists. Proceeding with logout.");
             try {
-                const response = await fetch(`${apiUrl}/backend/logout/logout.php`, {
+                const response = await fetch(`${webServerUrl}/backend/logout/logout.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

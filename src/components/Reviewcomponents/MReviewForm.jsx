@@ -73,10 +73,10 @@ const handleInputChange = (e) => {
       term: formData.term === 'add' ? formData.newTerm : formData.term // If term is 'add', use newTerm, otherwise use term
     };
 
+    const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+    const apiUrl = "http://localhost:8000";
 
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
-
-    fetch(`${apiUrl}/backend/createReview/createReview.php`, {
+    fetch(`${webServerUrl}/backend/createReview/createReview.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

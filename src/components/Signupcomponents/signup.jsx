@@ -3,8 +3,8 @@ import './signup.css';
 import eyeLogo from './Logo.png';
 import { Link, useNavigate } from 'react-router-dom';
 
-const apiUrl = 'https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac/backend/register/register.php';
-const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+const apiUrl = "http://localhost:8000";
 
 const Main = () => {
   const navigate = useNavigate();
@@ -23,13 +23,12 @@ const Main = () => {
       alert("Please use a buffalo.edu email address to sign up");
       return;
     }
-    const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
     
 
  
     try {
-      const response = await fetch(`${apiUrl}/backend/register/register.php`, {
+      const response = await fetch(`${webServerUrl}/backend/register/register.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
