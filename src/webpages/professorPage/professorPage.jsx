@@ -6,9 +6,8 @@ import defaultPic from "../../images/defaultPic.png";
 import savedIcon from "../../images/saved_icon.png";
 import savedIconColored from "../../images/saved_icon_colored.png";
 
-const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
+const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL;
 const apiUrl = process.env.REACT_APP_API_BASE_URL;
-
 
 const importProfessorImage = (imagePath) => {
     try {
@@ -27,7 +26,6 @@ const ProfessorCard = () => {
     const [profdepartment, setProfDepartment] = useState('');
     const [ID, setProid] = useState('');
     const [isSaved, setIsSaved] = useState(false);
-
     const [pfppath, setPfppath] = useState('');
 
     const [professorInfo, setProfessorInfo] = useState({
@@ -47,7 +45,9 @@ const ProfessorCard = () => {
         setProfName(name);
         setProfDepartment(department);
         setPfppath(path);
-        setProid(ID)
+        setProid(ID);
+    
+        // Fetch professor's information
         setTimeout(() => {
             setProfessorInfo({
                 name: name,
@@ -81,10 +81,48 @@ const ProfessorCard = () => {
                     }
                 ]
             });
+    
+            // Retrieve session ID from local storage
+            const sessionID = localStorage.getItem('sessionID');
+    
+            // If session ID is not found, handle the error
+            if (!sessionID) {
+                console.error('Session ID not found in local storage');
+                return;
+            }
+    
+            // Construct the request body
+            const requestBody = {
+                sessionID: sessionID,
+                professorID: ID // Change to professorID
+            };
+    
+            // Send request to backend to check saved status
+            fetch(`${apiUrl}/backend/saveProfessor/checkSavedStatus.php`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update saved status based on response
+                setIsSaved(data.isSaved);
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }, 1000);
     };
+    
+
 
     const toggleSave = () => {
+        // Update saved status based on the opposite of current isSaved value
+        setIsSaved(!isSaved);
+
         // Retrieve session ID from local storage
         const sessionID = localStorage.getItem('sessionID');
 
@@ -111,8 +149,6 @@ const ProfessorCard = () => {
         })
             .then(response => response.json())
             .then(data => {
-                // Update saved status based on response
-                setIsSaved(!isSaved);
                 console.log(data);
             })
             .catch(error => {
