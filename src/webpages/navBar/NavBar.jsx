@@ -54,7 +54,7 @@ function NavBar() {
             }
         } else {
             console.log("No active session found. Redirecting to login page.");
-            navigate('/signin');
+            navigate('/signinpage');
         }
     };
 
