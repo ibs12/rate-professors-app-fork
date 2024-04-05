@@ -1,10 +1,10 @@
 <?php
-
 header('Content-Type: application/json');
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 header('X-Content-Type-Options: nosniff');
+
 require_once '../db_config.php';
 
 // Define an array of allowed origins
@@ -45,46 +45,40 @@ function getDbConnection() {
     return $conn;
 }
 
-// Check if the professorID is provided in the request
-if (isset($_POST['professorID'])) {
-    // Sanitize the input to prevent SQL injection
-    $professorID = $_POST['professorID'];
-    $professorID = mysqli_real_escape_string(getDbConnection(), $professorID);
+// Check if professorID is provided
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Decode JSON data from the request body
+    $data = json_decode(file_get_contents('php://input'), true);
 
-    // Prepare the SQL query to fetch reviews for the specified professorID
-    $query = "SELECT * FROM prof_reviews WHERE professorID = '$professorID'";
+    // Check if professorID exists in the decoded data
+    if (isset($data['professorID'])) {
+        $professorID = $data['professorID'];
+        // Sanitize professorID to prevent SQL injection
+        $professorID = mysqli_real_escape_string(getDbConnection(), $professorID);
+        
+        // Query to retrieve reviews based on professorID
+        $sql = "SELECT * FROM prof_reviews WHERE professor_id = '$professorID'";
+        $result = getDbConnection()->query($sql);
 
-    // Execute the query
-    $result = mysqli_query(getDbConnection(), $query);
-
-    if ($result) {
-        // Fetch data and store in array
-        $reviews = array();
-        while ($row = mysqli_fetch_assoc($result)) {
-            $reviews[] = $row;
+        if ($result) {
+            $reviews = [];
+            // Fetch rows and add them to the reviews array
+            while ($row = $result->fetch_assoc()) {
+                $reviews[] = $row;
+            }
+            // Return reviews array as JSON response
+            echo json_encode($reviews);
+        } else {
+            // No reviews found, return appropriate JSON response
+            echo json_encode(['message' => 'No reviews found']);
         }
-
-        // Return reviews as JSON response
-        echo json_encode(array(
-            'success' => true,
-            'reviews' => $reviews
-        ));
     } else {
-        // If query execution fails
-        echo json_encode(array(
-            'success' => false,
-            'error' => 'Failed to execute query'
-        ));
+        // Handle error: professorID not found in the JSON data
+        echo json_encode(['error' => 'Professor ID not provided']);
     }
 } else {
-    // If professorID is not provided in the request
-    echo json_encode(array(
-        'success' => false,
-        'error' => 'Professor ID is required'
-    ));
+    // Handle error: Only POST method allowed
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(['error' => 'Only POST method allowed']);
 }
-
-// Close database connection (optional)
-getDbConnection()->close();
-
 ?>
