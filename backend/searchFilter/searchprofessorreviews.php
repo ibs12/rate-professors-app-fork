@@ -71,9 +71,9 @@ $reviews = fetchReviews();
 // Check if reviews exist
 if (!empty($reviews)) {
     // Return reviews as JSON
-    return json_encode($reviews);
+    echo json_encode($reviews);
 } else {
     // No reviews found
-    return json_encode(['message' => 'No reviews found']);
+    echo json_encode(['message' => 'No reviews found']);
 }
 ?>
