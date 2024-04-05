@@ -15,7 +15,7 @@
     margin-bottom: 20px;
   }
   
-  .professor-image {
+  .professor-image- {
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -36,6 +36,7 @@
     display: flex;
     flex-direction: column;
   }
+
   
   label {
     font-weight: bold;

@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './ReviewForm.css';
-import Professor from './Unknown.jpeg';
+import defaultPic from './Unknown.jpeg';
+
+const importProfessorImage = (imagePath) => {
+  try {
+    const images = require.context('../../images/professorpfp', false, /\.(png|jpe?g|svg)$/);
+    return images(`./${imagePath}`);
+  } catch (error) {
+    return defaultPic;
+  }
+};
 
 const ReviewForm = ({ professorImage }) => {
+  const navigate = useNavigate();
   const { name } = useParams();
   const [formData, setFormData] = useState({
     course: '',
@@ -18,11 +28,15 @@ const ReviewForm = ({ professorImage }) => {
   const [charCount, setCharCount] = useState(0);
   const [profName, setProfName] = useState('');
   const [department, setDepartment] = useState('');
+  const [pfppath, setPfppath] = useState('');
+  const [ID, setProid] = useState('');
 
   useEffect(() => {
-    const [profNameParam, departmentParam] = name.split('+');
+    const [profNameParam, departmentParam, path,ID] = name.split('+');
     setProfName(profNameParam);
     setDepartment(departmentParam);
+    setPfppath(path);
+    setProid(ID);
   }, [name]);
 
   const handleInputChange = (e) => {
@@ -39,40 +53,71 @@ const ReviewForm = ({ professorImage }) => {
     }
   };
   
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.course || !formData.term || !formData.difficulty || !formData.helpfulness || !formData.clarity || !formData.feedback || !formData.professorType || !formData.comment) {
+    if (!formData.course || !formData.term || !formData.difficulty || !formData.helpfulness || !formData.clarity || !formData.feedback || !formData.accessibility|| !formData.comment) {
       alert('You must fill out all fields.');
       return;
     }
-    console.log('Form submitted:', formData);
-    alert('Form submitted successfully!');
-    setFormData({
-      course: '',
-      term: '',
-      difficulty: '',
-      helpfulness: '',
-      clarity: '',
-      feedback: '',
-      professorType: '',
-      comment: ''
-    });
-    setCharCount(0);
+
+const reviewData = {
+  userID: localStorage.getItem('userID'), // Assuming you store userID in localStorage after login
+  professorID: ID, // Assuming professorID is derived from pfppath
+  difficulty: formData.difficulty,
+  helpfulness: formData.helpfulness,
+  clarity: formData.clarity,
+  Feedback_Quality: formData.feedback, // Assuming it's Feedback_Quality in PHP
+  accessibility: formData.accessibility, // You need to handle this in your form
+  comment: formData.comment,
+  course: formData.course === 'add' ? formData.newCourse : formData.course, // If course is 'add', use newCourse, otherwise use course
+  term: formData.term === 'add' ? formData.newTerm : formData.term // If term is 'add', use newTerm, otherwise use term
+};
+
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
+    fetch(`${apiUrl}/backend/createReview/createReview.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('sessionID')}` // Assuming you have a sessionID after login
+      },
+      body: JSON.stringify(reviewData)
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to submit review');
+        }
+      })
+      .then(data => {
+        // Handle success response, if needed
+        alert('Review submitted successfully');
+        navigate(`/professor/${profName + '+' + department + '+' + pfppath+'+'+ID}`);
+      })
+      .catch(error => {
+        // Handle error
+        console.error('Review submission error:', error);
+        alert('Failed to submit review. Please try again.');
+      });
   };
 
   const handleCancel = () => {
-    setFormData({
-      course: '',
-      term: '',
-      difficulty: '',
-      helpfulness: '',
-      clarity: '',
-      feedback: '',
-      professorType: '',
-      comment: ''
-    });
-    setCharCount(0);
+    const confirmation = window.confirm("This review will not save. Are you sure you want to cancel?");
+    if (confirmation) {
+      setFormData({
+        course: '',
+        term: '',
+        difficulty: '',
+        helpfulness: '',
+        clarity: '',
+        feedback: '',
+        professorType: '',
+        comment: ''
+      });
+      setCharCount(0);
+      navigate(`/professor/${profName + '+' + department + '+' + pfppath+'+'+ID}`);
+    }
   };
 
   return (
@@ -144,10 +189,21 @@ const ReviewForm = ({ professorImage }) => {
                 <option value="5">5</option>
               </select>
             </div>
+            <div className="review-page-form-group">
+              <label htmlFor="accessibility">Accessibility:</label>
+              <select id="accessibility" name="accessibility" value={formData.accessibility} onChange={handleInputChange}>
+                <option value="">-- Select Accessibility: --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
           </form>
         </div>
         <div className="review-page-professor-info">
-          <img src={Professor} alt="Professor" className="review-page-professor-image" />
+          <img src={importProfessorImage(pfppath)} alt="Professor" className="review-page-professor-image" />
           <div className="review-page-professor-details">
             <p><strong>Name:</strong> {profName}</p>
             <p><strong>Department:</strong> {department}</p>
@@ -161,8 +217,9 @@ const ReviewForm = ({ professorImage }) => {
           <div className="review-page-char-count">Character count: {charCount}/500</div>
         </div>
         <div className="review-page-form-buttons">
-          <button type="submit">Submit</button>
           <button type="button" onClick={handleCancel}>Cancel</button>
+          <button type="submit">Submit</button>
+      
         </div>
       </form>
     </div>
@@ -170,4 +227,3 @@ const ReviewForm = ({ professorImage }) => {
 };
 
 export default ReviewForm;
-
