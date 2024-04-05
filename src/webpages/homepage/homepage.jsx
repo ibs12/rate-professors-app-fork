@@ -11,10 +11,15 @@ const Homepage = () => {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
+    const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL;
     const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
     if (searchTerm.trim() !== '') {
+      if (filter === 'classes') {
+        // If filter is set to "classes", show a popup saying "we will implement that later"
+        alert('We will implement that later.');
+        return; // Exit the function, don't proceed with the search
+      }
 
       fetch(`${apiUrl}/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
         .then(response => {
@@ -70,7 +75,5 @@ const Homepage = () => {
     </div>
   );
 };
-
-
 
 export default Homepage;

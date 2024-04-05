@@ -39,41 +39,39 @@ function getDbConnection() {
     global $servername, $username, $password, $dbname;
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
-        return ['error' => 'Connection failed: ' . $conn->connect_error];
+        throw new Exception('Connection failed: ' . $conn->connect_error);
     }
     return $conn;
 }
 
 // Fetch all rows from the prof_reviews table
+// Fetch all rows from the prof_reviews table
 function fetchReviews() {
-    $conn = getDbConnection();
-    if (isset($conn['error'])) {
-        return ['error' => $conn['error']];
-    }
-    
-    $sql = "SELECT * FROM prof_reviews";
-    $result = $conn->query($sql);
-    
-    $reviews = [];
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $reviews[] = $row;
+    try {
+        $conn = getDbConnection();
+        $sql = "SELECT * FROM prof_reviews";
+        $result = $conn->query($sql);
+        $reviews = [];
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $reviews[] = $row;
+            }
         }
+        $conn->close();
+        return $reviews;
+    } catch (Exception $e) {
+        http_response_code(500);
+        return ['error' => $e->getMessage()];
     }
-    
-    $conn->close();
-    return $reviews;
 }
 
-// Fetch reviews
 $reviews = fetchReviews();
 
-// Check if reviews exist
 if (!empty($reviews)) {
-    // Return reviews as JSON
-    echo json_encode($reviews);
+    http_response_code(200);
+    echo json_encode($reviews); // Convert reviews array to JSON and echo it
 } else {
-    // No reviews found
-    echo json_encode(['message' => 'No reviews found']);
+    http_response_code(404);
+    echo json_encode(['error' => 'No reviews found']); // Echo JSON error message
 }
 ?>
