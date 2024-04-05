@@ -73,7 +73,7 @@ const reviewData = {
   term: formData.term === 'add' ? formData.newTerm : formData.term // If term is 'add', use newTerm, otherwise use term
 };
 
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
     fetch(`${apiUrl}/backend/createReview/createReview.php`, {
       method: 'POST',

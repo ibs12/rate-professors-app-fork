@@ -94,7 +94,7 @@ const handleInputChange = (e) => {
       .then(data => {
         // Handle success response, if needed
         alert('Review submitted successfully');
-        navigate(`/professor/${profName + '+' + department + '+' + pfppath+'+'+ID}`);
+        navigate(`/professor/${profName + '+' + department + '+' + pfppath+ '+' +ID}`);
       })
       .catch(error => {
         // Handle error
