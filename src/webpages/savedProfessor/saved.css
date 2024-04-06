@@ -57,7 +57,7 @@
 .saved-professor-infos {
     padding: 0.5rem;
     flex-grow: 1; /* Make the infos section take the remaining space */
-    padding-left: 20vh
+    margin-left: 20vh
     
 }
 
@@ -108,9 +108,17 @@
     margin-left: 10px;
 }
 
+@media(max-width:1260px){
+    .saved-professor-infos{
+        margin-left:0vh;
+    }
 
+    .saved-professors-container{
+        margin-left:12vh;
+    }
+}
 /* Responsive adjustments */
-@media (max-width: 800px) {
+@media (max-width: 860px) {
     .saved-professors-container {
         margin-left: 5vh;
         margin-right: 2vh;
