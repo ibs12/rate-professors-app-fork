@@ -11,12 +11,17 @@ const Homepage = () => {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+    const apiUrl = "http://localhost:8000";
+
     if (searchTerm.trim() !== '') {
-      //server:
-      //fetch(`https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
-      //local:
-      fetch(proxyUrl+`https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
+      if (filter === 'classes') {
+        // If filter is set to "classes", show a popup saying "we will implement that later"
+        alert('We will implement that later.');
+        return; // Exit the function, don't proceed with the search
+      }
+
+      fetch(`${webServerUrl}/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -49,7 +54,7 @@ const Homepage = () => {
           <input
             className="search-input"
             type="text"
-            placeholder="Enter a Professor"
+            placeholder="Enter a Professor or Class"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -65,7 +70,7 @@ const Homepage = () => {
             <img src={SearchIcon} alt="Search" />
           </button>
         </div>
-        {searchError && <p>{searchError}</p>}
+        {searchError && <p className="error-message">{searchError}</p>}
       </div>
     </div>
   );

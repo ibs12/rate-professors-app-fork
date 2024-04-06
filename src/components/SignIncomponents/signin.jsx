@@ -1,12 +1,19 @@
+//'https://cors-anywhere.herokuapp.com/https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac/backend/login/login.php'
+
 import React, { useState } from 'react';
 import './signin.css'; 
 import eyeLogo from './Logo.png';
 import { Link,useNavigate } from 'react-router-dom';
+import { useAuth } from '../../AuthContext'; // Import useAuth hook
+
 function Main() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const { checkAuth } = useAuth();
+  const { setIsAuthenticated } = useAuth();
   const navigate= useNavigate();
+
   const handleLogin = () => {
     // Check if the email ends with 'buffalo.edu'
     if (!email.endsWith('buffalo.edu')) {
@@ -19,17 +26,13 @@ function Main() {
       email: email,
       password: password
     };
+    const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+    const apiUrl = "http://localhost:8000";
 
-    const apiUrl = 'https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac/backend/login/login.php';
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    //For local
-     fetch (proxyUrl + apiUrl, {
-    //For server
-    //fetch(apiUrl, {
+    fetch(`${webServerUrl}/backend/login/login.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Origin': 'https://www-student.cse.buffalo.edu/' // Add origin header
       },
       body: JSON.stringify(data)
     })    
@@ -43,8 +46,14 @@ function Main() {
     .then(data => {
       // Check if the response contains expected data
       if (data.email && data.sessionID && data.userID) {
-        localStorage.setItem('userData', JSON.stringify(data));
+        // localStorage.setItem('userData', JSON.stringify(data));
+        localStorage.setItem('email', data.email);
+        localStorage.setItem('sessionID', data.sessionID);
+        localStorage.setItem('userID', data.userID);
         // Redirect to '/home' page
+        // checkAuth();
+        setIsAuthenticated(true);
+
         navigate('/homepage');
       } else {
         // Handle unexpected response

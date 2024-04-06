@@ -1,10 +1,26 @@
 <?php
+header('Content-Type: application/json');
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 header('X-Content-Type-Options: nosniff');
 require_once '../db_config.php';
 
-function getDbConnection() {
+// Define an array of allowed origins
+$allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://www-student.cse.buffalo.edu'
+];
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    // Stop script execution after sending preflight response
+    exit(0);
+}
+
+
+function getDbConnection()
+{
     global $servername, $username, $password, $dbname;
     $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -16,19 +32,20 @@ function getDbConnection() {
     return $conn;
 }
 
-function checkLogin($email, $password) {
+function checkLogin($email, $password)
+{
     $conn = getDbConnection();
-    
+
     $selectStmt = $conn->prepare("SELECT userID, password FROM users WHERE email = ?");
     $selectStmt->bind_param("s", $email);
     $selectStmt->execute();
     $result = $selectStmt->get_result();
-    
+
     if ($row = $result->fetch_assoc()) {
         if (password_verify($password, $row['password'])) {
             $sessionID = bin2hex(random_bytes(25));
             $userID = $row['userID'];
-        
+
             // Insert session into the 'sessions' table
             $insertStmt = $conn->prepare("INSERT INTO sessions (sessionID, email, userID) VALUES (?, ?, ?)");
             $insertStmt->bind_param("ssi", $sessionID, $email, $userID);
@@ -63,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $data = $_POST;
     }
-    
+
     if (isset($data['action']) && $data['action'] == 'login' && isset($data['email']) && isset($data['password'])) {
         checkLogin($data['email'], $data['password']);
     } else {
@@ -73,4 +90,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     exit;
 }
-?>
