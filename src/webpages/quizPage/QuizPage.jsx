@@ -10,13 +10,13 @@ const Quiz = () => {
 
   const navigate = useNavigate(); // Use the useNavigate hook
 
-  const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+  const apiUrl = "http://localhost:8000";
 
   const addToProfile = () => {
     const sessionID = localStorage.getItem('sessionID');
     if (sessionID) {
-      fetch(`${apiUrl}/backend/saveQuiz/savequiz.php`, {
+      fetch(`${webServerUrl}/backend/saveQuiz/savequiz.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

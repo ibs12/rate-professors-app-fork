@@ -4,7 +4,8 @@ import './saved.css';
 import Default from '../../images/defaultPic.png';
 import TrashPic from '../../images/trash_bin.png';
 
-const apiUrl = process.env.REACT_APP_API_BASE_URL;
+const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+const apiUrl = "http://localhost:8000";
 
 const importProfessorImage = (imagePath) => {
     try {
@@ -31,7 +32,7 @@ const Saved = () => {
         const fetchSavedProfessors = async () => {
             const requestBody = { userID: userID, action: 'fetch' }; // Add action 'fetch'
 
-            const response = await fetch(`${apiUrl}/backend/saveProfessor/fetchSaved.php`, {
+            const response = await fetch(`${webServerUrl}/backend/saveProfessor/fetchSaved.php`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -59,7 +60,7 @@ const Saved = () => {
     const removeProfessor = async (professorID) => {
         const userID = localStorage.getItem('userID');
         const requestBody = { userID: userID, professorID: professorID, action: 'remove' };
-        const response = await fetch(`${apiUrl}/backend/saveProfessor/removeSaved.php`, {
+        const response = await fetch(`${webServerUrl}/backend/saveProfessor/removeSaved.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
