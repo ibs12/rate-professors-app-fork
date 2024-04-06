@@ -6,49 +6,59 @@ error_reporting(E_ALL);
 header('X-Content-Type-Options: nosniff');
 require_once '../db_config.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    // Stop script execution after sending preflight response
-    exit(0);
-}
-
 // Get the database connection
 function getDbConnection() {
     global $servername, $username, $password, $dbname;
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
-        throw new Exception('Connection failed: ' . $conn->connect_error);
+        return ['error' => 'Connection failed: ' . $conn->connect_error];
     }
     return $conn;
 }
 
-// Fetch all rows from the prof_reviews table
-// Fetch all rows from the prof_reviews table
-function fetchReviews() {
-    try {
-        $conn = getDbConnection();
-        $sql = "SELECT * FROM prof_reviews";
-        $result = $conn->query($sql);
-        $reviews = [];
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                $reviews[] = $row;
-            }
+// Fetch rows from the prof_reviews table for a specific professorID
+function fetchReviews($professorID) {
+    $conn = getDbConnection();
+    $sql = "SELECT * FROM prof_reviews WHERE professorID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $professorID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $reviews = [];
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            $reviews[] = $row;
         }
-        $conn->close();
-        return $reviews;
-    } catch (Exception $e) {
-        http_response_code(500);
-        return ['error' => $e->getMessage()];
     }
+
+    // Close the database connection
+    $stmt->close();
+    $conn->close();
+
+    return $reviews;
 }
 
-$reviews = fetchReviews();
+// Get JSON data sent from frontend
+$json_data = file_get_contents('php://input');
+$request_data = json_decode($json_data, true);
 
-if (!empty($reviews)) {
-    http_response_code(200);
-    echo json_encode($reviews); // Convert reviews array to JSON and echo it
+// Check if professorID exists in the request data
+if(isset($request_data['professorID'])) {
+    // Fetch reviews for the given professorID
+    $professorID = $request_data['professorID'];
+    $reviews = fetchReviews($professorID);
+
+    // Check if reviews exist
+    if (!empty($reviews)) {
+        // Return reviews as JSON
+        echo json_encode($reviews);
+    } else {
+        // No reviews found
+        echo json_encode(['message' => 'No reviews found for the given professorID']);
+    }
 } else {
-    http_response_code(404);
-    echo json_encode(['error' => 'No reviews found']); // Echo JSON error message
+    // Send error message if professorID is not provided
+    echo json_encode(['error' => 'ProfessorID is not provided']);
 }
 ?>
