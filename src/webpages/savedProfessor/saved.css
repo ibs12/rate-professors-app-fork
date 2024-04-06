@@ -110,7 +110,7 @@
 
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
     .saved-professors-container {
         margin-left: 5vh;
         margin-right: 2vh;
@@ -153,7 +153,7 @@
     }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 500px) {
     .saved-professors-container {
         margin-left: 3vh;
         margin-right: 1vh;
