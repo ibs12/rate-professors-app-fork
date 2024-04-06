@@ -179,7 +179,7 @@
 }
 
 /* Styles for mobile devices (up to 425px) */
-@media (max-width: 425px) {
+@media (max-width: 500px) {
     .profile-page-professor-main {
         padding-top: 7vh;
         margin-left: 2vh;

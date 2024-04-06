@@ -95,12 +95,13 @@
 
 
 .profile-image {
-    height: 200px; /* Adjusted back to your initial size or as needed */
-    width: 200px;
+    height: calc(10vw + 10vh); /* Combine viewport width and height for a balanced scaling */
+    width: calc(10vw + 10vh); /* Same as height to maintain aspect ratio */
     border-radius: 50%;
     object-fit: cover;
     cursor: pointer;
 }
+
 
 
 .field-container {
