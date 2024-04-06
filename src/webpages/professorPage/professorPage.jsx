@@ -37,6 +37,7 @@ const ProfessorCard = () => {
 
     useEffect(() => {
         fetchProfessorInfo(name);
+        checkSavedStatus(name);
     }, [name]);
 
     const fetchProfessorInfo = (Data) => {
@@ -96,8 +97,44 @@ const ProfessorCard = () => {
                 console.error('Error:', error);
             });
     };
+        const checkSavedStatus = (Data) => {
+            const [name, department, path, ID] = Data.split('+');
+            setProfName(name);
+            setProfDepartment(department);
+            setPfppath(path);
+            setProid(ID);
+        const sessionID = localStorage.getItem('sessionID');
     
-
+        // If session ID is not found, handle the error
+        if (!sessionID) {
+            console.error('Session ID not found in local storage');
+            return;
+        }
+    
+        const requestBody = {
+            sessionID: sessionID,
+            professorID: ID 
+        };
+    
+        console.log('Request Body:', requestBody); // Print requestBody
+    
+        fetch(`${webServerUrl}/backend/saveProfessor/checkSavedStatus.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+        .then(response => response.json())
+        .then(data => {
+            setIsSaved(data.isSaved);
+            console.log('Fetched saved status:', data); // Print fetched data
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    };
+    
     const toggleSave = () => {
         const sessionID = localStorage.getItem('sessionID');
 
