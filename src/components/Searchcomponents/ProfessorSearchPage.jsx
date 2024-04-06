@@ -15,12 +15,16 @@ const importProfessorImage = (imagePath) => {
 };
 
 const ProfessorSearchPage = ({ professors }) => {
+  const handleSearchButtonClick = () => {
+    alert('We will implement that later.');
+  };
+
   return (
     <div className="search-app">
       <p className="search-intro-text">I want to get to know ...</p>
       <div className="search-container">
         <input type="text" placeholder="Enter a Professor" className="search-search-input" />
-        <button className="search-search-button">
+        <button className="search-search-button" onClick={handleSearchButtonClick}>
           <img src={SearchIcon} alt="Search" />
         </button>
       </div>

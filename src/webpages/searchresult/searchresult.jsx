@@ -7,10 +7,9 @@ function Search() {
   const [professors, setProfessors] = useState([]);
   const location = useLocation();
 
-  const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
-  
+  const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+  const apiUrl = "http://localhost:8000";
 
   useEffect(() => {
     // Check if search results are available in location state
@@ -19,7 +18,7 @@ function Search() {
       setProfessors(location.state.professors.map(({ professors, pfppath, ...rest }) => ({ name: professors, pfppath, ...rest })));
     } else {
       // If not available, fetch search results from the backend
-      fetch(`${apiUrl}/backend/searchFilter/?filter=professors`)
+      fetch(`${webServerUrl}/backend/searchFilter/?filter=professors`)
         .then(response => response.json())
         .then(data => {
           console.log("Received data from backend:", data);

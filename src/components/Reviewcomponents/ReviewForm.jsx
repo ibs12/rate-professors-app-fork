@@ -41,6 +41,9 @@ const ReviewForm = ({ professorImage }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'comment' && value.length > 500) {
+      return; 
+    }
     setFormData({
       ...formData,
       [name]: value
@@ -69,10 +72,10 @@ const reviewData = {
   course: formData.course === 'add' ? formData.newCourse : formData.course, // If course is 'add', use newCourse, otherwise use course
   term: formData.term === 'add' ? formData.newTerm : formData.term // If term is 'add', use newTerm, otherwise use term
 };
+  const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+  const apiUrl = "http://localhost:8000";
 
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
-
-    fetch(`${apiUrl}/backend/createReview/createReview.php`, {
+    fetch(`${webServerUrl}/backend/createReview/createReview.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

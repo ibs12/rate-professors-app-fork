@@ -8,9 +8,8 @@ export const AuthProvider = ({ children }) => {
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const webServerUrl = process.env.REACT_APP_WEB_SERVER_URL
-  const apiUrl = process.env.REACT_APP_API_BASE_URL;
-
+  const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+  const apiUrl = "http://localhost:8000";
 
 
   const signOut = () => {
@@ -24,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     const userID = localStorage.getItem('userID');
   
     if (email && sessionID && userID) {
-      fetch(`${apiUrl}/backend/authentication/auth.php`, {
+      fetch(`${webServerUrl}/backend/authentication/auth.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

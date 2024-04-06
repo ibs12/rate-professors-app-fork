@@ -4,7 +4,8 @@ import './saved.css';
 import Default from '../../images/defaultPic.png';
 import TrashPic from '../../images/trash_bin.png';
 
-const apiUrl = process.env.REACT_APP_API_BASE_URL;
+const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+const apiUrl = "http://localhost:8000";
 
 const importProfessorImage = (imagePath) => {
     try {
@@ -31,7 +32,7 @@ const Saved = () => {
         const fetchSavedProfessors = async () => {
             const requestBody = { userID: userID, action: 'fetch' }; // Add action 'fetch'
 
-            const response = await fetch(`${apiUrl}/backend/saveProfessor/fetchSaved.php`, {
+            const response = await fetch(`${webServerUrl}/backend/saveProfessor/fetchSaved.php`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -59,7 +60,7 @@ const Saved = () => {
     const removeProfessor = async (professorID) => {
         const userID = localStorage.getItem('userID');
         const requestBody = { userID: userID, professorID: professorID, action: 'remove' };
-        const response = await fetch(`${apiUrl}/backend/saveProfessor/removeSaved.php`, {
+        const response = await fetch(`${webServerUrl}/backend/saveProfessor/removeSaved.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
@@ -73,15 +74,9 @@ const Saved = () => {
         }
     };    
 
-      if (response.ok) {
-          setProfessors(professors.filter(professor => professor.professorID !== professorID));
-      } else {
-          console.error('Failed to delete the professor');
-      }
-  };
-  return (
-    <div>
-        <NavBar />
+    return (
+<div>
+    <NavBar />
         <div className="page-content">
             <h1 className="page-title">Saved Professors</h1>
             <div className="saved-professors-container">
@@ -92,15 +87,15 @@ const Saved = () => {
                             <div className="saved-professor-infos">
                                 <h2 className="saved-professor-name">{professor.professors}</h2>
                                 <p className="saved-professor-department">{professor.department}</p>
-                                <p className="saved-professor-rating">Rating: {professor.rating || 'Not Rated'}</p>
-
+                                <p className="saved-professor-rating">Rating: {professor.rating || '-/5'}</p>
                             </div>
-                            <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
                         </div>
-                    ))}
-                </div>
+                        <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />
+                    </div>
+                ))}
             </div>
         </div>
+    </div>
     );
 };
 

@@ -6,25 +6,6 @@ error_reporting(E_ALL);
 header('X-Content-Type-Options: nosniff');
 require_once '../db_config.php'; // Include database configuration
 
-// CORS handling to allow requests from specific origins
-$allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://localhost',
-    'https://www-student.cse.buffalo.edu'
-];
-
-$requestOrigin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-if (in_array($requestOrigin, $allowedOrigins)) {
-    header("Access-Control-Allow-Origin: $requestOrigin");
-    header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, Authorization');
-} else {
-    echo json_encode(['error' => 'Origin not allowed']);
-    exit;
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0); // Correctly handle preflight requests
 }
