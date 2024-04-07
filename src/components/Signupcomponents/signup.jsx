@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './signup.css'; 
 import eyeLogo from './Logo.png';
-import signUp from '../../SignUpLink.jsx';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-function Main() {
-  const navigate= useNavigate();
+const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+const apiUrl = "http://localhost:8000";
+
+const Main = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,21 +24,34 @@ function Main() {
       return;
     }
 
-    try {
-      const responseData = await signUp(email, username, password, confirmPassword);
-      console.log('Response data:', responseData);
+    
 
-      if (responseData.includes("User registered successfully") || responseData.includes("Email sent successfully")) {
-        // Use relative path for navigation
-        navigate('/signinpage');
+ 
+    try {
+      const response = await fetch(`${webServerUrl}/backend/register/register.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          username: username,
+          password: password,
+          confirmPassword: confirmPassword,
+          action: 'register',
+        }),
+      });
+
+      if (!response.ok) {
+        const responseData = await response.json();
+        throw new Error(String(responseData.message));
       } else {
-        alert(responseData);
+        navigate('/signinpage');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert("The user name is already been used.");
+      alert(error.message);
     }
-  };
+  }
 
   return (
     <div className="main-container">
