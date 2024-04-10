@@ -22,7 +22,7 @@ const ReviewForm = ({ professorImage }) => {
     helpfulness: '',
     clarity: '',
     feedback: '',
-    professorType: '',
+    accessibility: '',
     comment: ''
   });
   const [charCount, setCharCount] = useState(0);
