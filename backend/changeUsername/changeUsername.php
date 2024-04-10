@@ -62,6 +62,67 @@ function updateUsername($userId, $newUsername)
     $conn->close();
 }
 
+// Function to check if username is already taken
+function isUsernameTaken($newUsername)
+{
+    $conn = getDbConnection();
+
+    // Prepare statement to check if username exists
+    if ($stmt = $conn->prepare("SELECT username FROM users WHERE username = ?")) {
+        $stmt->bind_param("s", $newUsername);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            // Username already exists
+            return true;
+        } else {
+            // Username is available
+            return false;
+        }
+
+        $stmt->close();
+    } else {
+        // Statement preparation failed
+        http_response_code(500); // Server error
+        echo json_encode(["message" => "Failed to prepare statement: " . $conn->error]);
+    }
+
+    $conn->close();
+}
+
+// Function to get current username for a given userID
+function getCurrentUsername($userId)
+{
+    $conn = getDbConnection();
+
+    // Prepare statement to get current username
+    if ($stmt = $conn->prepare("SELECT username FROM users WHERE userID = ?")) {
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+            $currentUsername = $row['username'];
+            $stmt->close();
+            return $currentUsername;
+        } else {
+            // No user found
+            http_response_code(404); // Not Found
+            echo json_encode(["status" => "error", "message" => "User not found."]);
+            exit;
+        }
+    } else {
+        // Statement preparation failed
+        http_response_code(500); // Server error
+        echo json_encode(["message" => "Failed to prepare statement: " . $conn->error]);
+        exit;
+    }
+
+    $conn->close();
+}
+
 // Extract session ID and new username from input data
 $sessionId = $data['sessionID'] ?? null;
 $newUsername = $data['username'] ?? null;
@@ -86,7 +147,26 @@ if ($stmt = $conn->prepare("SELECT userID FROM sessions WHERE sessionID = ?")) {
         $row = $result->fetch_assoc();
         $userId = $row['userID'];
         $stmt->close();
-        updateUsername($userId, $newUsername); // Update username
+
+        // Check if the new username is the same as the current username
+        $currentUsername = getCurrentUsername($userId);
+        if ($newUsername === $currentUsername) {
+            // User is trying to change to the same username
+            http_response_code(400); // Bad Request
+            echo json_encode(["status" => "error", "message" => "You already have this username."]);
+            exit;
+        }
+
+        // Check if username is already taken
+        if (isUsernameTaken($newUsername)) {
+            // Username is already taken
+            http_response_code(409); // Conflict
+            echo json_encode(["status" => "error", "message" => "Username already taken."]);
+            exit;
+        }
+
+        // Update username
+        updateUsername($userId, $newUsername);
     } else {
         // Session ID not found or multiple records found
         http_response_code(404); // Not Found
