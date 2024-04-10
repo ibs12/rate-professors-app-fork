@@ -25,13 +25,13 @@ function App() {
             <Route path="/" element={<StartPage />} /> 
             {/* Wrap protected routes with ProtectedRoute component */}
             <Route path="/review/:name" element={<ProtectedRoute><Review /></ProtectedRoute>} />
-            <Route path="/homepage" element={<Homepage />} />
+            <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
             <Route path="/accountsettings" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
             <Route path="/professorPage" element={<ProtectedRoute><ProfessorPage /></ProtectedRoute>} />
             <Route path="/quizPage" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
-            <Route path="/professor/:name" element={<ProfessorPage />} />
+            <Route path="/professor/:name" element={<ProtectedRoute><ProfessorPage /></ProtectedRoute>} />
             {/* Assuming you want the search feature open to everyone in sprint 2, so it's not wrapped */}
-            <Route path="/search" element={<Search />} />
+            <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
             <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />
           </Routes>
         </div>

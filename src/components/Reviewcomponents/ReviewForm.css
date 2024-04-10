@@ -8,6 +8,10 @@
     border-radius: 5px;
 
   }
+
+  .term-dropdowns select {
+    width: 100%; /* Adjust the width as needed */
+  }
   
   .review-page-flex-container {
     display: flex;

@@ -41,7 +41,7 @@ function Footer() {
         justifyContent: 'center', /* Center horizontally */
         textAlign: 'center'
       }}>
-        <Link to="/homepage/" style={{ textDecoration: 'none' }}> Access the website as a Guest</Link>
+        {/* <Link to="/homepage/" style={{ textDecoration: 'none' }}> Access the website as a Guest</Link> */}
       </p>
     </footer>
   );
