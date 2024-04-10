@@ -22,7 +22,7 @@ const ReviewForm = ({ professorImage }) => {
     helpfulness: '',
     clarity: '',
     feedback: '',
-    professorType: '',
+    accessibility: '',
     comment: ''
   });
   const [charCount, setCharCount] = useState(0);
@@ -60,12 +60,19 @@ const ReviewForm = ({ professorImage }) => {
     if (name === 'comment') {
       setCharCount(value.length);
     }
+    if (name === 'semester' || name === 'year') {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        term: prevFormData.semester && prevFormData.year ? `${prevFormData.semester} ${prevFormData.year}` : ''
+      }));
+    }
   };
+  
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
-      (formData.term === 'add' && (!formData.newTerm || formData.newTerm.trim() === '')) ||
       (formData.course === 'add' && (!formData.newCourse || formData.newCourse.trim() === '')) ||
       !formData.course ||
       !formData.term ||
@@ -169,8 +176,8 @@ const ReviewForm = ({ professorImage }) => {
                 />
               )}
             </div>
-<div className="review-page-form-group">
-  <label htmlFor="term">Term:</label>
+            <div className="review-page-form-group">
+              <label htmlFor="term">Term:</label>
   <div className="term-dropdowns">
     <select id="semester" name="semester" value={formData.semester} onChange={handleInputChange}>
       <option value="">-- Select Semester --</option>
