@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import NavBar from '../navBar/NavBar';
-import './accountsettings.css'; // Ensure this path is correct
+import './accountsettings.css';
 import defaultProfilePic from "../../images/eye.png";
 import { useNavigate } from 'react-router-dom';
 
@@ -8,12 +8,15 @@ const AccountSettingsPage = () => {
     const [profilePic, setProfilePic] = useState(null);
     const [major, setMajor] = useState('');
     const [graduationYear, setGraduationYear] = useState('');
+    const [currentname, setCurrentName] = useState('');
     const [name, setName] = useState('');
     const [coursesTaken, setCoursesTaken] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const quizResult = localStorage.getItem('quizResult') || 'No quiz result yet';
+    const [isPasswordSection, setIsPasswordSection] = useState(true); 
 
     const handleProfilePicChange = (event) => {
         const file = event.target.files[0];
@@ -27,27 +30,71 @@ const AccountSettingsPage = () => {
         setIsModalOpen(true);
     };
 
+    const navigate = useNavigate();
 
+    const handleResetPassword = () => {
+        const sessionId = localStorage.getItem('sessionID');
+        const oldPassword = currentPassword;
+        const newPasswordValue = newPassword; // Rename variable to avoid shadowing
     
-    const navigate = useNavigate(); // Initialize useNavigate
-
-
+        const confirmPassword = confirmNewPassword;
     
-
-    const handleConfirmDelete = () => {
-        const email = localStorage.getItem('email'); // assuming you have email stored
-        const sessionId = localStorage.getItem('sessionID'); // adjust the key according to your storage
-        const userID = localStorage.getItem('userID'); // adjust the key according to your storage
+        if (newPasswordValue !== confirmPassword) {
+            alert("New password and confirm password do not match.");
+            return;
+        }
     
         const data = {
-            email, // using the retrieved email
-            sessionId,
-            userID // using the retrieved userID
+            sessionID: sessionId,
+            oldpassword: oldPassword,
+            newpassword: newPasswordValue // Use the correct variable here
         };
-
+        console.log("Data sent to backend:", data); // Print out the data
+    
+        const backendUrl = 'http://localhost:8000/backend/changePassword/changePassword.php';
+    
+        fetch(backendUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to change password');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Password changed successfully');
+            } else {
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Change password error:', error);
+            alert(`Failed to change password: ${error.message}`);
+        });
+    };
     
 
-        // Use your backend endpoint URL
+    const toggleSection = () => {
+        setIsPasswordSection(prev => !prev);
+    };
+
+    const handleConfirmDelete = () => {
+        const email = localStorage.getItem('email');
+        const sessionId = localStorage.getItem('sessionID');
+        const userID = localStorage.getItem('userID');
+
+        const data = {
+            email,
+            sessionId,
+            userID
+        };
+
         const backendUrl = 'http://localhost:8000/backend/removeuser/remove.php';
         fetch(backendUrl, {
             method: 'POST',
@@ -63,30 +110,66 @@ const AccountSettingsPage = () => {
             return response.json();
         })
         .then(data => {
-            // Here, data is the parsed JSON object
             if (data.status === 'success') {
                 alert('Account successfully deleted');
-                navigate('/signuppage'); // Navigate to the sign-up page or login page
+                navigate('/signuppage');
             } else {
-                // Handle any specific server-sent error messages
                 throw new Error(data.message || 'Unknown error occurred');
             }
         })
         .catch(error => {
-            // Catch any errors in the fetch or parsing process
             console.error('Delete account error:', error);
             alert(`Failed to delete account: ${error.message}`);
         });
-    
 
-        setIsModalOpen(false); // Close the modal after attempting to delete the account
+        setIsModalOpen(false);
     };
 
-    // Your existing component code...
+    const handleChangeUsername = () => {
+        const sessionId = localStorage.getItem('sessionID');
+        const newUsername = name;
 
+        const data = {
+            sessionID: sessionId,
+            username: newUsername
+        };
+        console.log("Data sent to backend:", data); // Print out the data
 
+        const backendUrl = 'http://localhost:8000/backend/changeUsername/changeUsername.php';
+        fetch(backendUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update username');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Username updated successfully');
+            } else {
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Update username error:', error);
+            alert(`Failed to update username: ${error.message}`);
+        });
+    };
 
-    // Simple Modal Component
+    const handleSaveChanges = () => {
+        if (isPasswordSection) {
+            handleResetPassword();
+        } else {
+            handleChangeUsername();
+        }
+    };
+
     const SimpleModal = ({ isOpen, onClose, onConfirm }) => {
         if (!isOpen) return null;
 
@@ -135,28 +218,27 @@ const AccountSettingsPage = () => {
                         onChange={(e) => setGraduationYear(e.target.value)}
                         className="text-field"
                     />
-                    <label  className="text-field">Quiz Result: {quizResult}</label>
+                    <label className="text-field">Quiz Result: {quizResult}</label>
                 </div>
                 <div className="delete-account-container">
                     <button className="delete-account-button" onClick={handleDeleteAccount}>
                         Delete Account
                     </button>
                 </div>
-                
             </div>
-        <SimpleModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onConfirm={handleConfirmDelete}
-                />
+            <SimpleModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+            />
             <div className="right-side">
                 <div className='field-group'>
-                    <label className="field-label">Name:</label>
+                    <label className="field-label">Current Username:</label>
                     <input
                         type="text"
                         placeholder="Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={currentname}
+                        onChange={(e) => setCurrentName(e.target.value)}
                         className="text-field"
                     />
                 </div>
@@ -173,44 +255,66 @@ const AccountSettingsPage = () => {
                 </div>
 
                 <hr className="divider" />
-
-                <div className='field-group'>
-                    <label className="field-label">Current Password:</label>
-                    <input
-                        type="password"
-                        placeholder="Current Password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        className="text-field"
-                    />
+                <div className="section-toggle-buttons">
+                    <button className={isPasswordSection ? 'active' : ''} onClick={toggleSection}>
+                        Change Password
+                    </button>
+                    <button className={!isPasswordSection ? 'active' : ''} onClick={toggleSection}>
+                        Update Username
+                    </button>
                 </div>
-
-                <div className='field-group'>
-                    <label className="field-label">New Password:</label>
-                    <input
-                        type="password"
-                        placeholder="New Password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="text-field"
-                    />
-                </div>
-
-                <div className='field-group'>
-                    <label className="field-label">Confirm New Password:</label>
-                    <input
-                        type="password"
-                        placeholder="Confirm New Password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="text-field"
-                    />
-                </div>
-                
-
-
+                {isPasswordSection && (
+                    <div className="password-change-section">
+                        <div className='field-group'>
+                            <label className="field-label">Current Password:</label>
+                            <input
+                                type="password"
+                                placeholder="Current Password"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                className="text-field"
+                            />
+                        </div>
+                        <div className='field-group'>
+                            <label className="field-label">New Password:</label>
+                            <input
+                                type="password"
+                                placeholder="New Password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="text-field"
+                            />
+                        </div>
+                        <div className='field-group'>
+                            <label className="field-label">Confirm New Password:</label>
+                            <input
+                                type="password"
+                                placeholder="Confirm New Password"
+                                value={confirmNewPassword}
+                                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                className="text-field"
+                            />
+                        </div>
+                    </div>
+                )}
+                {!isPasswordSection && (
+                    <div className="username-update-section">
+                        <div className='field-group'>
+                            <label className="field-label">New Username:</label>
+                            <input
+                                type="text"
+                                placeholder="Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="text-field"
+                            />
+                        </div>
+                    </div>
+                )}
                 <div className="button-container">
-                    <button className="save-button">Save Changes</button> {/* Save button now inside a container */}
+                    <button className="save-button" onClick={handleSaveChanges}>
+                        Save Changes
+                    </button>
                 </div>
             </div>
         </div>
