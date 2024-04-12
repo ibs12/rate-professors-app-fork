@@ -25,10 +25,12 @@ function getDbConnection()
 $conn = getDbConnection();
 
 // Main logic for updating professor's classes
+$data = json_decode(file_get_contents('php://input'), true);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $professorID = $_POST['professorID'] ?? '';
-    $courseNumber = $_POST['courseNumber'] ?? '';
-    $courseName = $_POST['courseName'] ?? '';
+    $professorID = $data['professorID'] ?? '';
+    $courseNumber = $data['courseNumber'] ?? '';
+    $courseName = $data['courseName'] ?? '';
 
     if (empty($professorID) || empty($courseNumber) || empty($courseName)) {
         echo json_encode(['error' => 'ProfessorID, CourseNumber, and CourseName are required.']);
