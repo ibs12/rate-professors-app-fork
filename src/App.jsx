@@ -33,6 +33,7 @@ function App() {
             {/* Assuming you want the search feature open to everyone in sprint 2, so it's not wrapped */}
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
             <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />
+            
           </Routes>
         </div>
       </Router>

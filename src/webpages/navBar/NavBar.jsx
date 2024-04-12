@@ -54,7 +54,11 @@ function NavBar() {
             }
         } else {
             console.log("No active session found. Redirecting to login page.");
-            navigate('/signinpage');
+            const confirmRedirect = window.confirm("Sorry! This feature is only for sign-up users. Would you like to sign up?");
+            if (confirmRedirect) {
+                navigate('/signuppage');
+            } else {
+            }
         }
     };
 
@@ -83,6 +87,7 @@ function NavBar() {
                             Account Settings
                         </Link>
                     </li>
+                    
                     <li className="navbar-menu-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
                         Logout
                     </li>
