@@ -50,6 +50,25 @@ const ProfessorCard = () => {
         const request = {
             professorID: ID
         };
+
+        fetch(`${apiUrl}/backend/overallProfessorsRating/overallProfessorsRating.php?professorId=${ID}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Assuming data contains the total average in data.updatedAverages.total_average
+            const totalAverage = data.updatedAverages.total_average > 0 ? parseFloat(data.updatedAverages.total_average) : '-';
+            setProfessorInfo(prevInfo => ({
+                ...prevInfo,
+                rating: totalAverage // Update rating with the actual total average
+            }));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     
         fetch(`${webServerUrl}/backend/searchFilter/searchprofessorreviews.php`, {
             method: 'POST',
@@ -107,6 +126,8 @@ const ProfessorCard = () => {
             .catch(error => {
                 console.error('Error:', error);
             });
+
+
     };    
         const checkSavedStatus = (Data) => {
             const [name, department, path, ID] = Data.split('+');
@@ -223,7 +244,7 @@ const ProfessorCard = () => {
                     <p>{professorInfo.department}</p>
                 </div>
                 <div className="profile-page-professor-rating">
-                    <span>{professorInfo.rating}/5</span>
+                    <span>{professorInfo.rating}</span>
                 </div>
             </div>
             <div className='profile-page-sort-button-container'>
