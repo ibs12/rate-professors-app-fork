@@ -87,6 +87,11 @@ function NavBar() {
                             Account Settings
                         </Link>
                     </li>
+                    <li>
+                        <Link to="/Recommendpage" className="navbar-menu-item">
+                            Recommended Professors
+                        </Link>
+                    </li>
                     
                     <li className="navbar-menu-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
                         Logout
