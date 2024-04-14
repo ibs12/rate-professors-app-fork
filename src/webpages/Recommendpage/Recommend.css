@@ -1,0 +1,66 @@
+/* RecommendedProfessorsPage.css */
+
+.recommended-professors-page-content {
+    padding: 2rem;
+    background-color: #f5f5f5;
+  }
+  
+  .recommended-professors-page-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .recommended-professors-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 5rem;
+  }
+  
+  .recommended-professor-cards {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .recommended-professor-infos-container {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+  }
+  
+  .recommended-professor-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1.5rem;
+  }
+  
+  .recommended-professor-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .recommended-professor-department {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+  
+  .recommended-professor-rating {
+    font-size: 1.1rem;
+    color: #666;
+  }
+  
+  #departmentFilter {
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 2rem;
+  }

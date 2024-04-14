@@ -50,6 +50,25 @@ const ProfessorCard = () => {
         const request = {
             professorID: ID
         };
+
+        fetch(`${apiUrl}/backend/overallProfessorsRating/overallProfessorsRating.php?professorId=${ID}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Assuming data contains the total average in data.updatedAverages.total_average
+            const totalAverage = data.updatedAverages.total_average > 0 ? parseFloat(data.updatedAverages.total_average) : '-';
+            setProfessorInfo(prevInfo => ({
+                ...prevInfo,
+                rating: totalAverage // Update rating with the actual total average
+            }));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     
         fetch(`${webServerUrl}/backend/searchFilter/searchprofessorreviews.php`, {
             method: 'POST',
@@ -69,34 +88,47 @@ const ProfessorCard = () => {
             })
             .then(data => {
                 console.log('Fetched reviews:', data);
-                const updatedReviews = data.map(review => {
-                    // Extract individual ratings
-                    const { Feedback_Quality, accessibility, clarity, difficulty, helpfulness } = review;
+                // Check if there are reviews available
+                if (data.length > 0) {
+                    const updatedReviews = data.map(review => {
+                        // Extract individual ratings from the review object
+                        const { Feedback_Quality, accessibility, clarity, difficulty, helpfulness } = review;
     
-                    // Calculate average rating
-                    const totalRating = parseInt(Feedback_Quality) + parseInt(accessibility) + parseInt(clarity) + parseInt(difficulty) + parseInt(helpfulness);
-                    const averageRating = totalRating / 5; // Assuming 5 attributes
+                        // Calculate average rating for the review
+                        const totalRating = parseInt(Feedback_Quality) + parseInt(accessibility) + parseInt(clarity) + parseInt(difficulty) + parseInt(helpfulness);
+                        const averageRating = totalRating / 5; // Assuming 5 attributes
     
-                    // Update review object with average rating
-                    return {
-                        ...review,
-                        rating: averageRating
-                    };
-                });
+                        // Return the review object with the calculated average rating
+                        return {
+                            ...review,
+                            rating: averageRating
+                        };
+                    });
     
-                const filteredReviews = updatedReviews.filter(review => review.professorID === ID);
-                setProfessorInfo({
-                    name: name,
-                    department: department,
-                    profilePicture: '',
-                    rating: 5, // You may want to calculate the overall rating based on all reviews
-                    reviews: filteredReviews
-                });
+                    setProfessorInfo({
+                        name: name,
+                        department: department,
+                        profilePicture: '',
+                        rating: '-', // You may want to calculate the overall rating based on all reviews
+                        reviews: updatedReviews
+                    });
+                } else {
+                    // If no reviews available, set only the basic information
+                    setProfessorInfo({
+                        name: name,
+                        department: department,
+                        profilePicture: '',
+                        rating: '-', // You may want to calculate the overall rating based on all reviews
+                        reviews: []
+                    });
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
             });
-    };
+
+
+    };    
         const checkSavedStatus = (Data) => {
             const [name, department, path, ID] = Data.split('+');
             setProfName(name);
@@ -212,12 +244,12 @@ const ProfessorCard = () => {
                     <p>{professorInfo.department}</p>
                 </div>
                 <div className="profile-page-professor-rating">
-                    <span>{professorInfo.rating}/5</span>
+                    <span>{professorInfo.rating}</span>
                 </div>
             </div>
             <div className='profile-page-sort-button-container'>
-                <button className='profile-page-sort-button' onClick={() => sortReviews("rating")}>Sort by Rating</button>
-                <button className='profile-page-sort-button' onClick={() => sortReviews("author")}>Sort by Author</button>
+                {/*<button className='profile-page-sort-button' onClick={() => sortReviews("rating")}>Sort by Rating</button>*/}
+                {/* <button className='profile-page-sort-button' onClick={() => sortReviews("author")}>Sort by Author</button> */}
             </div>
 
             <div className="profile-page-reviews">

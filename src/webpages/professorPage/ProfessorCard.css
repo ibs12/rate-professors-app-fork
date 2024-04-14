@@ -59,6 +59,7 @@
 .profile-page-professor-info p {
     color: #666;
     font-size: 25px;
+    padding-right: 10px;
 }
 
 .profile-page-professor-rating span {
@@ -78,6 +79,7 @@
     background-color: #ffffff;
     margin-bottom: 20px;
     width: 80%;
+    
 }
 
 .profile-page-review h4 {

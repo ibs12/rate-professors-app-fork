@@ -42,6 +42,7 @@ function Footer() {
         textAlign: 'center'
       }}>
         <Link to="/homepage/" style={{ textDecoration: 'none' }}> No thanks! I'll sign up later.</Link>
+
       </p>
     </footer>
   );
