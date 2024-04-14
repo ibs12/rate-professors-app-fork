@@ -24,6 +24,18 @@ function getDbConnection()
     return $conn;
 }
 
+function validateGrade($grade) {
+    $validGrades = array("A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F");
+    return in_array($grade, $validGrades);
+}
+
+function addGradeColumnIfNeeded($conn) {
+    $result = $conn->query("SHOW COLUMNS FROM prof_reviews LIKE 'grade'");
+    if ($result->num_rows === 0) {
+        $conn->query("ALTER TABLE prof_reviews ADD COLUMN grade VARCHAR(5) DEFAULT NULL");
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $data = json_decode(file_get_contents('php://input'), true);
     if (is_null($data)) {
@@ -44,6 +56,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $course = htmlspecialchars($data['course'], ENT_QUOTES, 'UTF-8'); // New
     $term = htmlspecialchars($data['term'], ENT_QUOTES, 'UTF-8'); // New
 
+    // Check if the grade field is provided
+    if (isset($data['grade'])) {
+        $grade = htmlspecialchars($data['grade'], ENT_QUOTES, 'UTF-8'); // New field for grade
+
+        // Treat empty grade as null
+        if ($grade === "") {
+            $grade = null;
+        } else {
+            // Treat "None" as null
+            if ($grade === "None") {
+                $grade = null;
+            }
+
+            // Validate the grade
+            if (!validateGrade($grade)) {
+                http_response_code(400);
+                echo json_encode(["error" => "Invalid grade. Grade must be A, A-, B+, B, B-, C+, C, C-, D+, D or F."]);
+                exit;
+            }
+        }
+    } else {
+        // If grade is not provided, set it to null
+        $grade = null;
+    }
+
     if (!$userId || !$professorId) {
         http_response_code(400);
         echo json_encode(["error" => "UserID and ProfessorID are required."]);
@@ -51,10 +88,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $conn = getDbConnection();
-    $stmt = $conn->prepare("INSERT INTO prof_reviews (userID, professorID, course, term, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    // Corrected bind_param line:
-    $stmt->bind_param("iissiiiiis", $userId, $professorId, $course, $term, $difficulty, $helpfulness, $clarity, $feedbackQuality, $accessibility, $comment);
-
+    // Add 'grade' column if it doesn't exist
+    addGradeColumnIfNeeded($conn);
+    $stmt = $conn->prepare("INSERT INTO prof_reviews (userID, professorID, course, term, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, comment, grade) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("iissiiiiiss", $userId, $professorId, $course, $term, $difficulty, $helpfulness, $clarity, $feedbackQuality, $accessibility, $comment, $grade);
 
     if ($stmt->execute()) {
         echo json_encode(["message" => "New review added successfully.", "status" => "success"]);
