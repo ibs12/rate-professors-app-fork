@@ -8,6 +8,8 @@ import { useAuth } from '../../AuthContext';
 function NavBar() {
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const { setIsAuthenticated } = useAuth();
+    const { isAuthenticateduser, setIsAuthenticateduser } = useAuth();
+
     const navigate = useNavigate();
 
     const toggleMenu = () => {
@@ -61,6 +63,16 @@ function NavBar() {
             }
         }
     };
+    const handleNavigationAttempt = (path) => {
+        if (isAuthenticateduser) {
+            navigate(path);
+        } else {
+            const confirmSignUp = window.confirm("Sorry! This feature is only for registered users. Would you like to sign up?");
+            if (confirmSignUp) {
+                navigate('/signuppage');
+            }
+        }
+    };
 
     return (
         <nav className="navbar">
@@ -77,23 +89,16 @@ function NavBar() {
                             Homepage
                         </Link>
                     </li>
-                    <li>
-                        <Link to="/saved" className="navbar-menu-item">
-                            Saved
-                        </Link>
+                    <li onClick={() => handleNavigationAttempt('/saved')} style={{ cursor: 'pointer' }} className="navbar-menu-item">
+                        Saved
                     </li>
-                    <li>
-                        <Link to="/accountsettings" className="navbar-menu-item">
-                            Account Settings
-                        </Link>
+                    <li onClick={() => handleNavigationAttempt('/accountsettings')} style={{ cursor: 'pointer' }} className="navbar-menu-item">
+                        Account Settings
                     </li>
-                    <li>
-                        <Link to="/Recommendpage" className="navbar-menu-item">
-                            Recommended Professors
-                        </Link>
+                    <li onClick={() => handleNavigationAttempt('/Recommendpaeg')} style={{ cursor: 'pointer' }} className="navbar-menu-item">
+                        Recommendation
                     </li>
-                    
-                    <li className="navbar-menu-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                    <li onClick={handleLogout} style={{ cursor: 'pointer' }} className="navbar-menu-item">
                         Logout
                     </li>
                 </ul>
