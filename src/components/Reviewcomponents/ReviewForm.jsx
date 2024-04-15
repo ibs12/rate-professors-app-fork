@@ -25,7 +25,8 @@ const ReviewForm = ({ professorImage }) => {
     accessibility: '',
     comment: '',
     coursePrefix: '',
-    courseNumber: ''
+    courseNumber: '',
+    finalGrade:''
   });
   const [charCount, setCharCount] = useState(0);
   const [profName, setProfName] = useState('');
@@ -209,6 +210,10 @@ const ReviewForm = ({ professorImage }) => {
         [name]: value
       }));
     }
+    setFormData({
+      ...formData,
+      [name]: value
+    });
   };
   
 
@@ -423,6 +428,28 @@ const ReviewForm = ({ professorImage }) => {
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
+              </select>
+            </div>
+            <div className="review-page-form-group">
+              <label htmlFor="finalGrade">Final Grade:</label>
+              <select
+                id="finalGrade"
+                name="finalGrade"
+                value={formData.finalGrade}
+                onChange={handleInputChange}
+              >
+                <option value="">-- Select Final Grade --</option>
+                <option value="A">A</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="B-">B-</option>
+                <option value="C+">C+</option>
+                <option value="C">C</option>
+                <option value="C-">C-</option>
+                <option value="D+">D+</option>
+                <option value="D">D</option>
+                <option value="F">F</option>
               </select>
             </div>
           </form>
