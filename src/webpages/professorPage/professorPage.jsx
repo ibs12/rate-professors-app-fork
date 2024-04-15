@@ -5,6 +5,8 @@ import NavBar from '../navBar/NavBar';
 import defaultPic from "../../images/defaultPic.png";
 import savedIcon from "../../images/saved_icon.png";
 import savedIconColored from "../../images/saved_icon_colored.png";
+import { useAuth } from '../../AuthContext';
+
 
 const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
 const apiUrl = "http://localhost:8000";
@@ -22,6 +24,8 @@ const importProfessorImage = (imagePath) => {
 const ProfessorCard = () => {
     const navigate = useNavigate();
     const { name } = useParams();
+    const { isAuthenticated } = useAuth(); // Destructure to get isAuthenticated from AuthContext
+
     const [profname, setProfName] = useState('');
     const [profdepartment, setProfDepartment] = useState('');
     const [ID, setProid] = useState('');
@@ -39,6 +43,13 @@ const ProfessorCard = () => {
         fetchProfessorInfo(name);
         checkSavedStatus(name);
     }, [name]);
+
+    const handleUnauthorized = () => {
+        const confirmSignUp = window.confirm("Sorry! This feature is only for registered users. Would you like to sign up?");
+        if (confirmSignUp) {
+            navigate('/signuppage');
+        }
+    };
 
     const fetchProfessorInfo = (Data) => {
         const [name, department, path, ID] = Data.split('+');
@@ -168,6 +179,10 @@ const ProfessorCard = () => {
     };
     
     const toggleSave = () => {
+        if (!isAuthenticated) {
+            handleUnauthorized();
+            return;
+        }
         const sessionID = localStorage.getItem('sessionID');
 
         if (!sessionID) {
@@ -199,6 +214,10 @@ const ProfessorCard = () => {
     };
 
     const handleWriteReview = () => {
+        if (!isAuthenticated) {
+            handleUnauthorized();
+            return;
+        }
         navigate(`/review/${profname+'+'+profdepartment+'+'+pfppath+'+'+ID}`);
     };
 
