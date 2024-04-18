@@ -33,7 +33,7 @@ function Search() {
   return (
     <div className="App">
       <NavBar/>
-      <ProfessorProfiles professors={professors} />
+      <ProfessorProfiles professors={professors} setProfessors={setProfessors}/>
     </div>
   );
 }
