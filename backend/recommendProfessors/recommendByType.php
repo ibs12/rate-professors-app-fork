@@ -36,7 +36,7 @@ function getQuizResult($conn, $userID)
 
 function getProfessorsByType($conn, $professorType)
 {
-    $query = $conn->prepare("SELECT ProfessorID, professors, Department, professor_type FROM professors WHERE professor_type = ?");
+    $query = $conn->prepare("SELECT ProfessorID, professors AS Name, pfppath, professor_type, department FROM professors WHERE professor_type = ?");
     if (!$query) {
         error_log("Prepare failed: " . $conn->error);
         http_response_code(500);
@@ -53,8 +53,9 @@ function getProfessorsByType($conn, $professorType)
         $professors[] = [
             'ProfessorID' => $row['ProfessorID'],
             'Name' => $row['Name'],
-            'Department' => $row['Department'],
-            'ProfessorType' => $row['professor_type']
+            'PfpPath' => $row['pfppath'],
+            'ProfessorType' => $row['professor_type'],
+            'Department' => $row['department']
         ];
     }
 
@@ -100,7 +101,7 @@ if (isset($data['userID'])) {
     updateRecommendations($conn, $userID, $professors);
     $conn->close();
 
-    echo json_encode(['message' => 'Recommendations updated successfully.']);
+    echo json_encode(['message' => 'Recommendations updated successfully.', 'professors' => $professors]);
 } else {
     http_response_code(400);
     echo json_encode(['message' => 'User ID is missing.']);
