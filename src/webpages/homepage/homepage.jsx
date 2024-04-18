@@ -10,6 +10,12 @@ const Homepage = () => {
   const [searchError, setSearchError] = useState('');
   const navigate = useNavigate();
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const handleSearch = () => {
     const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
     const apiUrl = "http://localhost:8000";
@@ -57,6 +63,7 @@ const Homepage = () => {
             placeholder="Enter a Professor or Class"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <select
             className="filter-select"
