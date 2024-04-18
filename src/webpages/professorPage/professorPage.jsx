@@ -6,7 +6,8 @@ import defaultPic from "../../images/defaultPic.png";
 import savedIcon from "../../images/saved_icon.png";
 import savedIconColored from "../../images/saved_icon_colored.png";
 import { useAuth } from '../../AuthContext';
-
+import InfoGraphicsCard from './infoGraphicsCard'; 
+import './infoGraphicsCard.css';
 
 const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
 const apiUrl = "http://localhost:8000";
@@ -247,6 +248,11 @@ const ProfessorCard = () => {
         );
     };
 
+        // Dummy data for the InfoGraphicsCard, replace with actual data
+    const dummyAverageGPA = "3.4";
+
+
+
     return (
         <div className='profile-page-professor-main'>
             <NavBar/>
@@ -265,6 +271,11 @@ const ProfessorCard = () => {
                 <div className="profile-page-professor-rating">
                     <span>{professorInfo.rating}</span>
                 </div>
+            </div>
+            <div>
+                <InfoGraphicsCard 
+                    averageGPA={dummyAverageGPA} 
+                />
             </div>
             <div className='profile-page-sort-button-container'>
                 {/*<button className='profile-page-sort-button' onClick={() => sortReviews("rating")}>Sort by Rating</button>*/}
