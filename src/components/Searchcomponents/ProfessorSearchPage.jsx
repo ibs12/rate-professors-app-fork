@@ -16,15 +16,20 @@ const importProfessorImage = (imagePath) => {
 
 const ProfessorSearchPage = ({ professors, setProfessors }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('professors'); // Default filter by professors
   const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac";
+  const apiUrl = "http://localhost:8000";
 
+  
+  
+  
   const handleSearchInputChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const handleSearchButtonClick = () => {
     if (searchTerm.trim() !== '') {
-      fetch(`${webServerUrl}/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=professors`)
+      fetch(`${apiUrl}/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -61,6 +66,14 @@ const ProfessorSearchPage = ({ professors, setProfessors }) => {
           onChange={handleSearchInputChange}
           onKeyDown={handleKeyDown}
         />
+        <select
+          className="search-filter-select"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        >
+          <option value="professors">Filter by Professor</option>
+          <option value="classes">Filter by Class</option>
+        </select>
         <button className="search-search-button" onClick={handleSearchButtonClick}>
           <img src={SearchIcon} alt="Search" />
         </button>

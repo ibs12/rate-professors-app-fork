@@ -21,13 +21,13 @@ const Homepage = () => {
     const apiUrl = "http://localhost:8000";
 
     if (searchTerm.trim() !== '') {
-      if (filter === 'classes') {
-        // If filter is set to "classes", show a popup saying "we will implement that later"
-        alert('We will implement that later.');
-        return; // Exit the function, don't proceed with the search
-      }
+      // if (filter === 'classes') {
+      //   // If filter is set to "classes", show a popup saying "we will implement that later"
+      //   alert('We will implement that later.');
+      //   return; // Exit the function, don't proceed with the search
+      // }
 
-      fetch(`${webServerUrl}/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
+      fetch(`${apiUrl}/backend/searchFilter/searchFilter.php?query=${encodeURIComponent(searchTerm)}&filter=${filter}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
