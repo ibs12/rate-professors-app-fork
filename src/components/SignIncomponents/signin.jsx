@@ -29,7 +29,7 @@ function Main() {
     const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
     const apiUrl = "http://localhost:8000";
 
-    fetch(`${webServerUrl}/backend/login/login.php`, {
+    fetch(`${apiUrl}/backend/login/login.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
