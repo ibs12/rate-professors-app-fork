@@ -186,6 +186,10 @@ const AccountSettingsPage = () => {
         );
     };
 
+    const handleRetakeQuiz = () =>{
+        navigate('/quizPage');  // Navigate to the quiz page
+    }
+
     return (
         <div className="main-container">
             <NavBar />
@@ -219,6 +223,11 @@ const AccountSettingsPage = () => {
                         className="text-field"
                     />
                     <label className="text-field">Quiz Result: {quizResult}</label>
+                </div>
+                <div >
+                    <button classname = "retake-quiz-button" onClick= {handleRetakeQuiz}>
+                        Retake Quiz?
+                    </button>
                 </div>
                 <div className="delete-account-container">
                     <button className="delete-account-button" onClick={handleDeleteAccount}>
