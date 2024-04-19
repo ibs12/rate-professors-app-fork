@@ -1,108 +1,86 @@
 <?php
+require_once '../db_config.php';
 
-ini_set('display_errors', 0); // Turn off error display, use logging instead
-ini_set('log_errors', 1); // Enable error logging
-error_reporting(E_ALL);
-require_once '../db_config.php'; // Adjust the path as needed
-
+// Set content type to JSON
 header('Content-Type: application/json');
 
-function getDbConnection()
-{
-    global $servername, $username, $password, $dbname;
-    $conn = new mysqli($servername, $username, $password, $dbname);
+// Set up error reporting
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-    if ($conn->connect_error) {
-        http_response_code(500);
-        error_log("Connection failed: " . $conn->connect_error);
-        echo json_encode(["message" => "Failed to connect to database: " . $conn->connect_error]);
-        exit;
-    }
-    return $conn;
+// Prevent MIME sniffing
+header('X-Content-Type-Options: nosniff');
+
+// Check if request method is OPTIONS (preflight request)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    // Stop script execution after sending preflight response
+    exit(0);
 }
 
-function getQuizResult($conn, $userID)
-{
-    $query = $conn->prepare("SELECT quiz_result FROM users WHERE userID = ?");
-    $query->bind_param("i", $userID);
-    $query->execute();
-    $result = $query->get_result();
-    if ($row = $result->fetch_assoc()) {
-        return $row['quiz_result'];
-    } else {
-        return null; // No result found
-    }
-}
-
-function getProfessorsByType($conn, $professorType)
-{
-    $query = $conn->prepare("SELECT ProfessorID, professors AS Name, pfppath, professor_type, department FROM professors WHERE professor_type = ?");
-    if (!$query) {
-        error_log("Prepare failed: " . $conn->error);
-        http_response_code(500);
-        echo json_encode(["message" => "Failed to prepare query: " . $conn->error]);
-        exit;
-    }
-
-    $query->bind_param("s", $professorType);
-    $query->execute();
-    $result = $query->get_result();
-    $professors = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $professors[] = [
-            'ProfessorID' => $row['ProfessorID'],
-            'Name' => $row['Name'],
-            'PfpPath' => $row['pfppath'],
-            'ProfessorType' => $row['professor_type'],
-            'Department' => $row['department']
-        ];
-    }
-
-    return $professors;
-}
-
-function updateRecommendations($conn, $userID, $professors)
-{
-    // Remove existing recommendations for the user
-    $deleteQuery = $conn->prepare("DELETE FROM recommended_professors WHERE UserID = ?");
-    $deleteQuery->bind_param("i", $userID);
-    $deleteQuery->execute();
-
-    // Insert new recommendations
-    $insertQuery = $conn->prepare("INSERT INTO recommended_professors (UserID, ProfessorID, prof_match) VALUES (?, ?, ?)");
-    foreach ($professors as $professor) {
-        $insertQuery->bind_param("iis", $userID, $professor['ProfessorID'], $professor['ProfessorType']);
-        $insertQuery->execute();
-    }
-}
-
+// Get JSON content from the request body
 $data = json_decode(file_get_contents('php://input'), true);
 
-if (isset($data['userID'])) {
-    $userID = $data['userID'];
-
-    $conn = getDbConnection();
-    $quizResult = getQuizResult($conn, $userID);
-
-    if ($quizResult === null) {
-        echo json_encode(['message' => 'Quiz result not found for the given user ID.']);
-        exit;
-    }
-
-    $quizResult = strtoupper($quizResult);
-    if (!in_array($quizResult, ['A', 'B', 'C', 'D', 'E'])) {
-        http_response_code(400);
-        echo json_encode(['message' => 'Invalid quiz result.']);
-        exit;
-    }
-
-    $professors = getProfessorsByType($conn, $quizResult);
-    updateRecommendations($conn, $userID, $professors);
-    $conn->close();
-
-    echo json_encode(['message' => 'Recommendations updated successfully.', 'professors' => $professors]);
-} else {
-    http_response_code(400);
-    echo json_encode(['message' => 'User ID is missing.']);
+// Check if userID is provided in the request body
+if (!isset($data['userID'])) {
+    echo json_encode(["status" => "error", "message" => "UserID is required."]);
+    exit;
 }
+
+$userID = $data['userID'];
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Delete existing recommendations for the user
+$deleteSql = "DELETE FROM recommended_professors WHERE userID = ?";
+$stmt = $conn->prepare($deleteSql);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$stmt->close();
+
+// Fetch user's quiz result from the database
+$sql = "SELECT quiz_result FROM users WHERE userID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $quizResult = $row['quiz_result'];
+    
+    // Split user's letters
+    $userLetters = explode(" and ", $quizResult);
+    
+    // Fetch professors matching user's letters
+    $professors = [];
+    foreach ($userLetters as $letter) {
+        $letter = trim($letter);
+        $professorSql = "SELECT professorID FROM professors WHERE professor_type = ?";
+        $stmt = $conn->prepare($professorSql);
+        $stmt->bind_param("s", $letter);
+        $stmt->execute();
+        $professorResult = $stmt->get_result();
+        while ($professor = $professorResult->fetch_assoc()) {
+            $professors[] = $professor['professorID'];
+        }
+    }
+    
+    // Insert recommended professors into recommended_professors table
+    foreach ($professors as $professorID) {
+        $insertSql = "INSERT INTO recommended_professors (userID, professorID) VALUES (?, ?)";
+        $stmt = $conn->prepare($insertSql);
+        $stmt->bind_param("ii", $userID, $professorID);
+        $stmt->execute();
+    }
+    
+    echo json_encode(["status" => "success", "message" => "Recommended professors updated successfully."]);
+} else {
+    echo json_encode(["status" => "error", "message" => "User not found."]);
+}
+
+$stmt->close();
+$conn->close();
+?>
