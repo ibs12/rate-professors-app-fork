@@ -14,6 +14,9 @@ function Main() {
   const { setIsAuthenticated } = useAuth();
   const navigate= useNavigate();
 
+
+  const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+  const apiUrl = "http://localhost:8000";
   const handleLogin = () => {
     // Check if the email ends with 'buffalo.edu'
     if (!email.endsWith('buffalo.edu')) {
@@ -26,10 +29,9 @@ function Main() {
       email: email,
       password: password
     };
-    const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
-    const apiUrl = "http://localhost:8000";
 
-    fetch(`${apiUrl}/backend/login/login.php`, {
+
+    fetch(`${webServerUrl}/backend/login/login.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -53,8 +55,9 @@ function Main() {
         // Redirect to '/home' page
         // checkAuth();
         setIsAuthenticated(true);
+        checkQuizTaken(data.sessionID);
 
-        navigate('/homepage');
+//        navigate('/homepage');
       } else {
         // Handle unexpected response
         throw new Error('Invalid response data');
@@ -65,6 +68,32 @@ function Main() {
       console.error('Login error:', error);
       // Show error message in a popup
       alert('Please check your email and password input');
+    });
+  };
+
+  const checkQuizTaken = (sessionID) => {
+    fetch(`${apiUrl}/backend/checkquizstatus/checkquizstatus.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sessionID: sessionID })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        if (data.message === 'User needs to take a quiz.') {
+          navigate('/quizPage');
+        } else {
+          navigate('/homepage');
+        }
+      } else {
+        throw new Error(data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error checking quiz status:', error);
+      alert('Error checking quiz status');
     });
   };
 
