@@ -9,18 +9,20 @@ const apiUrl = "http://localhost:8000"; // Assuming your backend runs on localho
 
 const importProfessorImage = (imagePath) => {
     try {
-      const images = require.context('../../images/professorpfp', false, /\.(png|jpe?g|svg)$/);
-      return images(`./${imagePath}`);
+        const images = require.context('../../images/professorpfp', false, /\.(png|jpe?g|svg)$/);
+        return images(`./${imagePath}`);
     } catch (error) {
-      return Default;
+        return Default;
     }
-  };
+};
 
 const RecommendedProfessorsPage = () => {
     const navigate = useNavigate();
     const [selectedDepartment, setSelectedDepartment] = useState('');
     const [professorsData, setProfessorsData] = useState([]);
     const [quizPromptVisible, setQuizPromptVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); // Add loading state
+    const [countdown, setCountdown] = useState(3);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,9 +46,17 @@ const RecommendedProfessorsPage = () => {
                 console.log('Received professor data:', data);
                 if (data.message === 'Quiz result not found for the given user ID.') {
                     setQuizPromptVisible(true);
+                    const interval = setInterval(() => {
+                        setCountdown(prevCountdown => prevCountdown - 1);
+                    }, 1000);
+                    setTimeout(() => {
+                        clearInterval(interval);
+                        navigate('/quizpage');
+                    }, 3000);
                 } else {
                     setProfessorsData(data.professors);
                 }
+                setIsLoading(false); // Update loading state
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -56,12 +66,6 @@ const RecommendedProfessorsPage = () => {
 
     const handleDepartmentChange = (event) => {
         setSelectedDepartment(event.target.value);
-    };
-
-    const handleQuizPrompt = (response) => {
-        if (response === 'yes') {
-            navigate('/quizpage');
-        }
     };
 
     const filteredProfessors = selectedDepartment
@@ -75,14 +79,16 @@ const RecommendedProfessorsPage = () => {
             <NavBar />
             <div className="recommended-professors-page-content">
                 <h1 className="recommended-professors-page-title">Recommended Professors</h1>
-                {quizPromptVisible && (
+                {isLoading && ( // Display loading prompt if isLoading is true
+                    <p>In the process of generating your personalized recommended professors...</p>
+                )}
+                {quizPromptVisible && !isLoading && (
                     <div className="quiz-prompt">
                         <p>It seems you haven't completed the quiz yet.</p>
-                        <p>Would you like to take the quiz to get personalized professor recommendations?</p>
-                        <button onClick={() => handleQuizPrompt('yes')}>Yes</button>
+                        <p>Redirecting to the quiz page in {countdown} seconds...</p>
                     </div>
                 )}
-                {!quizPromptVisible && (
+                {!quizPromptVisible && !isLoading && (
                     <div>
                         <label htmlFor="departmentFilter">Filter by Department:</label>
                         <select id="departmentFilter" value={selectedDepartment} onChange={handleDepartmentChange}>
@@ -93,7 +99,7 @@ const RecommendedProfessorsPage = () => {
                         </select>
                     </div>
                 )}
-                {!quizPromptVisible && (
+                {!quizPromptVisible && !isLoading && (
                     <div className="recommended-professors-container">
                         {filteredProfessors.map((professor, index) => (
                             <div key={index} className="recommended-professor-cards">
