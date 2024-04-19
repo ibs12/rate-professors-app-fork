@@ -16,6 +16,14 @@ const importProfessorImage = (imagePath) => {
     }
 };
 
+// Recursive function to remove 'Department of' prefix from all departments
+const removeDepartmentPrefix = (department) => {
+    if (department.startsWith('Department of')) {
+        return removeDepartmentPrefix(department.replace(/^Department of\s+/i, ''));
+    }
+    return department;
+};
+
 const RecommendedProfessorsPage = () => {
     const navigate = useNavigate();
     const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -44,6 +52,12 @@ const RecommendedProfessorsPage = () => {
 
                 const data = await response.json();
                 console.log('Received professor data:', data);
+
+                // Process department names to remove 'Department of' prefix from all departments
+                data.professors.forEach(professor => {
+                    professor.Department = professor.Department.split(';').map(dept => removeDepartmentPrefix(dept.trim())).join('; ');
+                });
+
                 if (data.message === 'Quiz result not found for the given user ID.') {
                     setQuizPromptVisible(true);
                     const interval = setInterval(() => {
