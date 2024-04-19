@@ -60,6 +60,7 @@ function NavBar() {
         }
     };
 
+
     const handleNavigationAttempt = (path) => {
         if (isAuthenticated) {
             navigate(path);
@@ -100,6 +101,45 @@ function NavBar() {
                     </li>
                 </ul>
             </div>
+            {isMenuVisible && (
+                <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: '0',
+                    backgroundColor: 'white',
+                    color: '#005bbb',
+                    padding: '1.5rem',
+                    boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)',
+                    zIndex: 1
+                }}>
+                    <ul style={{ listStyle: 'none', padding: 0 }}>
+                        <li style={{marginBottom: '0.5rem'}}>
+                            <Link to="/homepage" style={{ color: '#005bbb', textDecoration: 'none' }}>
+                                Homepage
+                            </Link>
+                        </li>
+                        <li style={{marginBottom: '0.5rem'}}>
+                            <Link to="/quizPage" style={{ color: '#005bbb', textDecoration: 'none' }}>
+                                Quiz
+                            </Link>
+                        </li>
+
+                        <li style={{marginBottom: '0.5rem'}}>Messages</li>
+                        <li style={{marginBottom: '0.5rem'}}>Saved</li>
+                        <li style={{marginBottom: '0.5rem'}}>
+                            <Link to="/accountsettings" style={{ color: '#005bbb', textDecoration: 'none' }}>
+                                Account Settings
+                            </Link>
+                        </li>
+                        <li style={{marginBottom: '0.5rem'}}>
+                            <button onClick={handleLogout} style={{ color: '#005bbb', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}>
+                                Logout
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            )}
+
         </nav>
     );
 }
