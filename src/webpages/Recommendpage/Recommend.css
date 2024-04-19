@@ -1,7 +1,7 @@
 /* RecommendedProfessorsPage.css */
 
 .recommended-professors-page-content {
-    padding: 2rem;
+    padding: 5rem;
     background-color: #f5f5f5;
   }
   
@@ -63,4 +63,27 @@
     border-radius: 4px;
     background-color: #fff;
     margin-bottom: 2rem;
+  }
+  .quiz-prompt {
+    background-color: #f4f4f4;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .quiz-prompt p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .quiz-prompt button {
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    background-color: #0077b6;
+    color: #fff;
+    border: none;
+    cursor: pointer;
   }
