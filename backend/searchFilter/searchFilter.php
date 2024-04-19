@@ -1,9 +1,9 @@
 <?php
-
-
-
-
 require_once '../db_config.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit(0); // Stop script execution after sending preflight response
+}
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -30,12 +30,10 @@ $likePatterns = array_unique($typoVariations);
 
 if ($filter === 'professors') {
     $sqlPatterns = implode("%' OR professors LIKE '%", $likePatterns);
-    // Assuming all columns are to be fetched, explicitly listing them for clarity and security
-    $sql = "SELECT professors, education, department, classes, research, email, office, phone, pfppath, difficulty, helpfulness, clarity, `Feedback Quality`, accessibility, (CASE WHEN professors LIKE '%$searchQuery%' THEN 1 ELSE 0 END) AS exactMatch FROM professors WHERE professors LIKE '%$sqlPatterns%'";
+    $sql = "SELECT professorID, professors, education, department, classes, research, email, office, phone, pfppath, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, (CASE WHEN professors LIKE '%$searchQuery%' THEN 1 ELSE 0 END) AS exactMatch FROM professors WHERE professors LIKE '%$sqlPatterns%'";
 } elseif ($filter === 'classes') {
-    $sqlPatterns = implode("%' OR class_title LIKE '%", $likePatterns);
-    // Modify this if you have a similar structure for classes and want to fetch specific details
-    $sql = "SELECT *, (CASE WHEN class_title LIKE '%$searchQuery%' THEN 1 ELSE 0 END) AS exactMatch FROM classes WHERE class_title LIKE '%$sqlPatterns%'";
+    $sqlPatterns = implode("%' OR classes LIKE '%", $likePatterns);
+    $sql = "SELECT professorID, professors, education, department, classes, research, email, office, phone, pfppath, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, (CASE WHEN classes LIKE '%$searchQuery%' THEN 1 ELSE 0 END) AS exactMatch FROM professors WHERE classes LIKE '%$sqlPatterns%'";
 } else {
     echo json_encode(['error' => 'Invalid filter']);
     $conn->close();
@@ -47,12 +45,12 @@ $matches = [];
 
 if ($result) {
     while ($row = $result->fetch_assoc()) {
-        $row['similarityScore'] = similar_text(strtolower($searchQuery), strtolower($row[$filter === 'professors' ? 'professors' : 'class_title']));
+        $row['similarityScore'] = similar_text(strtolower($searchQuery), strtolower($row[$filter]));
         $matches[] = $row;
     }
 }
 
-usort($matches, function($a, $b) {
+usort($matches, function ($a, $b) {
     if ($a['exactMatch'] == $b['exactMatch']) {
         return $b['similarityScore'] <=> $a['similarityScore'];
     }
@@ -63,4 +61,3 @@ header('Content-Type: application/json');
 echo json_encode($matches);
 
 $conn->close();
-?>

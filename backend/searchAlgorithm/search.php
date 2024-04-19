@@ -1,9 +1,13 @@
 <?php
 
- //Database connection variables
+//Database connection variables
 
 require_once '../db_config.php';
 
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    // Stop script execution after sending preflight response
+    exit(0);
+}
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -31,7 +35,7 @@ $typoVariations = [];
 foreach ($searchWords as $word) {
     // Add the original word
     $typoVariations[] = $word;
-    
+
     // Example: generate variations by substituting each character with a placeholder '*'
     for ($i = 0; $i < strlen($word); $i++) {
         $variation = substr_replace($word, '_', $i, 1);
@@ -65,7 +69,7 @@ if ($result) {
 }
 
 // Sort the results by exactMatch flag and similarityScore
-usort($matches, function($a, $b) {
+usort($matches, function ($a, $b) {
     if ($a['exactMatch'] == $b['exactMatch']) {
         return $b['similarityScore'] <=> $a['similarityScore'];
     }
@@ -77,4 +81,3 @@ echo json_encode($matches);
 
 
 $conn->close();
-?>

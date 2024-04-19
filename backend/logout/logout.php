@@ -3,6 +3,18 @@
 require_once '../db_config.php';
 $data = json_decode(file_get_contents('php://input'), true);
 
+// Define an array of allowed origins
+$allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://www-student.cse.buffalo.edu'
+];
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    // Stop script execution after sending preflight response
+    exit(0);
+}
+
 
 // Function to establish database connection
 function getDbConnection()

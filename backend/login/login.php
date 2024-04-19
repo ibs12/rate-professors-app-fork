@@ -1,35 +1,21 @@
 <?php
+header('Content-Type: application/json');
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 header('X-Content-Type-Options: nosniff');
 require_once '../db_config.php';
 
-
-// Specify the domains allowed for CORS, including HTTPS
-$allowedDomains = [
-    'https://www-student.cse.buffalo.edu', // Your production frontend domain
-    'http://localhost:3000', // Your development frontend domain
-    // Add any other domains you expect requests from
+// Define an array of allowed origins
+$allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://www-student.cse.buffalo.edu'
 ];
 
-// Check if the request origin is in the allowed list
-if (in_array($requestOrigin, $allowedDomains)) {
-    header('Access-Control-Allow-Origin: ' . $requestOrigin);
-    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept, Origin, Authorization');
-    header('Access-Control-Max-Age: 3600');
-    header('Access-Control-Allow-Credentials: true');
-}
-
-
-// Specifically handle OPTIONS method for preflight requests
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    // Note: 'Access-Control-Allow-Origin' is already set above based on the request origin
-    // No need to repeat it here unless you're overriding it for a specific reason
-
-    // Confirm preflight configuration with an OK status
-    http_response_code(200);
-    exit;
+    // Stop script execution after sending preflight response
+    exit(0);
 }
 
 

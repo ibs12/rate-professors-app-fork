@@ -10,6 +10,44 @@ const Quiz = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
+  const [result, setResult] = useState('');
+  const [showTable, setShowTable] = useState(false); // State to control table visibility
+
+  const navigate = useNavigate(); // Use the useNavigate hook
+
+  const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+  const apiUrl = "http://localhost:8000";
+
+  const addToProfile = () => {
+    const sessionID = localStorage.getItem('sessionID');
+    if (sessionID) {
+      fetch(`${webServerUrl}/backend/saveQuiz/savequiz.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionID: sessionID,
+          quizResult: result,
+        }),
+      })
+        .then(response => {
+          if (response.ok) {
+            alert('Result added to profile!');
+            navigate('/homepage');
+          } else {
+            throw new Error('Failed to save quiz result');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Failed to save quiz result');
+        });
+    } else {
+      alert('SessionID not found');
+    }
+  };
+  // Questions array remains the same...
 
   const handleSelectOption = (questionIndex, option) => {
     setAnswers({ ...answers, [questionIndex]: option });
