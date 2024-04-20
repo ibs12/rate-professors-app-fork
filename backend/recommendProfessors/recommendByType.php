@@ -50,10 +50,10 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $quizResult = $row['quiz_result'];
-    
+
     // Split user's letters
     $userLetters = explode(" and ", $quizResult);
-    
+
     // Fetch professors matching user's letters
     $professors = [];
     foreach ($userLetters as $letter) {
@@ -67,7 +67,7 @@ if ($result->num_rows > 0) {
             $professors[] = $professor['professorID'];
         }
     }
-    
+
     // Insert recommended professors into recommended_professors table
     foreach ($professors as $professorID) {
         $insertSql = "INSERT INTO recommended_professors (userID, professorID) VALUES (?, ?)";
@@ -75,12 +75,22 @@ if ($result->num_rows > 0) {
         $stmt->bind_param("ii", $userID, $professorID);
         $stmt->execute();
     }
-    
-    echo json_encode(["status" => "success", "message" => "Recommended professors updated successfully."]);
+
+    // Retrieve and return the recommended professors
+    $retrieveSql = "SELECT professorID FROM recommended_professors WHERE userID = ?";
+    $stmt = $conn->prepare($retrieveSql);
+    $stmt->bind_param("i", $userID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $recommendedProfessors = [];
+    while ($row = $result->fetch_assoc()) {
+        $recommendedProfessors[] = $row['professorID'];
+    }
+
+    echo json_encode(["status" => "success", "recommended_professors" => $recommendedProfessors, "message" => "Recommended professors fetched successfully."]);
 } else {
     echo json_encode(["status" => "error", "message" => "User not found."]);
 }
 
 $stmt->close();
 $conn->close();
-?>
