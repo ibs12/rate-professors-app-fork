@@ -53,9 +53,13 @@ const RecommendedProfessorsPage = () => {
                 const data = await response.json();
                 console.log('Received professor data:', data);
 
-                // Process department names to remove 'Department of' prefix from all departments
-                data.professors.forEach(professor => {
-                    professor.Department = professor.Department.split(';').map(dept => removeDepartmentPrefix(dept.trim())).join('; ');
+                if (!data || !data.recommended_professors) {
+                    console.error('Error: professors data is missing');
+                    return;
+                }
+
+                data.recommended_professors.forEach(professor => {
+                    professor.department = professor.department.split(';').map(dept => removeDepartmentPrefix(dept.trim())).join('; ');
                 });
 
                 if (data.message === 'Quiz result not found for the given user ID.') {
@@ -68,11 +72,12 @@ const RecommendedProfessorsPage = () => {
                         navigate('/quizpage');
                     }, 3000);
                 } else {
-                    setProfessorsData(data.professors);
+                    setProfessorsData(data.recommended_professors);
                 }
-                setIsLoading(false); // Update loading state
+                setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -84,7 +89,7 @@ const RecommendedProfessorsPage = () => {
 
     const filteredProfessors = selectedDepartment
         ? professorsData.filter(professor =>
-            professor.Department.split(';').some(dept => dept.trim() === selectedDepartment)
+            professor.department.split(';').some(dept => dept.trim() === selectedDepartment)
         )
         : professorsData;
 
@@ -93,7 +98,7 @@ const RecommendedProfessorsPage = () => {
             <NavBar />
             <div className="recommended-professors-page-content">
                 <h1 className="recommended-professors-page-title">Recommended Professors</h1>
-                {isLoading && ( // Display loading prompt if isLoading is true
+                {isLoading && (
                     <p>In the process of generating your personalized recommended professors...</p>
                 )}
                 {quizPromptVisible && !isLoading && (
@@ -107,7 +112,7 @@ const RecommendedProfessorsPage = () => {
                         <label htmlFor="departmentFilter">Filter by Department:</label>
                         <select id="departmentFilter" value={selectedDepartment} onChange={handleDepartmentChange}>
                             <option value="">All Departments</option>
-                            {[...new Set(professorsData.flatMap(professor => professor.Department.split(';').map(dept => dept.trim())))].map((department, index) => (
+                            {[...new Set(professorsData.flatMap(professor => professor.department.split(';').map(dept => dept.trim())))].map((department, index) => (
                                 <option key={index} value={department}>{department}</option>
                             ))}
                         </select>
@@ -119,7 +124,7 @@ const RecommendedProfessorsPage = () => {
                             <div key={index} className="recommended-professor-cards">
                                 <div className="recommended-professor-infos-container">
                                     <img
-                                        src={importProfessorImage(professor.PfpPath.split('/').pop())}
+                                        src={importProfessorImage(professor.pfppath.split('/').pop())}
                                         alt="Professor"
                                         className="recommended-professor-img"
                                         onError={(e) => e.target.src = Default}
@@ -127,12 +132,12 @@ const RecommendedProfessorsPage = () => {
                                     <div className="recommended-professor-infos">
                                         <Link
                                             to={{
-                                                pathname: `/professor/${professor.Name + '+' + professor.Department + '+' + professor.PfpPath.split('/').pop() + '+' + professor.ProfessorID}`
+                                                pathname: `/professor/${professor.professors + '+' + professor.department + '+' + professor.pfppath.split('/').pop() + '+' + professor.professorID}`
                                             }}
                                         >
-                                            {professor.Name}
+                                            {professor.professors}
                                         </Link>
-                                        <p className="recommended-professor-department">{professor.Department}</p>
+                                        <p className="recommended-professor-department">{professor.department}</p>
                                     </div>
                                 </div>
                             </div>
