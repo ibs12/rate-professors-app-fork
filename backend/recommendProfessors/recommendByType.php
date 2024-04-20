@@ -76,15 +76,15 @@ if ($result->num_rows > 0) {
         $stmt->execute();
     }
 
-    // Retrieve and return the recommended professors
-    $retrieveSql = "SELECT professorID FROM recommended_professors WHERE userID = ?";
+    // Retrieve and return the recommended professors with additional details
+    $retrieveSql = "SELECT p.professorID, p.professors, p.department, p.pfppath FROM professors p JOIN recommended_professors rp ON p.professorID = rp.professorID WHERE rp.userID = ?";
     $stmt = $conn->prepare($retrieveSql);
     $stmt->bind_param("i", $userID);
     $stmt->execute();
     $result = $stmt->get_result();
     $recommendedProfessors = [];
     while ($row = $result->fetch_assoc()) {
-        $recommendedProfessors[] = $row['professorID'];
+        $recommendedProfessors[] = $row;
     }
 
     echo json_encode(["status" => "success", "recommended_professors" => $recommendedProfessors, "message" => "Recommended professors fetched successfully."]);
