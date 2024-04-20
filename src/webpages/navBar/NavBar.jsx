@@ -60,6 +60,7 @@ function NavBar() {
         }
     };
 
+
     const handleNavigationAttempt = (path) => {
         if (isAuthenticated) {
             navigate(path);
@@ -100,6 +101,7 @@ function NavBar() {
                     </li>
                 </ul>
             </div>
+
         </nav>
     );
 }

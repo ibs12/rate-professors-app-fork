@@ -52,3 +52,12 @@
   font-family: "Crimison text";
   font-size: calc(1.125vw + 1.125vh);
 }
+.search-filter-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  font-family: "Crimson text", serif;
+  font-size: 16pt;
+  background-color: white;
+  cursor: pointer;
+}

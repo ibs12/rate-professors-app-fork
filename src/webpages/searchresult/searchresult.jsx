@@ -6,6 +6,8 @@ import { useLocation } from 'react-router-dom';
 function Search() {
   const [professors, setProfessors] = useState([]);
   const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('professors'); // Default filter by professors
 
 
   const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
@@ -18,7 +20,7 @@ function Search() {
       setProfessors(location.state.professors.map(({ professors, pfppath, ...rest }) => ({ name: professors, pfppath, ...rest })));
     } else {
       // If not available, fetch search results from the backend
-      fetch(`${webServerUrl}/backend/searchFilter/?filter=professors`)
+      fetch(`${apiUrl}/backend/searchFilter/?filter=professors`)
         .then(response => response.json())
         .then(data => {
           console.log("Received data from backend:", data);
