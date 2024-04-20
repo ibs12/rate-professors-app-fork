@@ -53,16 +53,22 @@ const RecommendedProfessorsPage = () => {
                 const data = await response.json();
                 console.log('Received professor data:', data);
 
-                if (!data || !data.recommended_professors) {
-                    console.error('Error: professors data is missing');
-                    return;
+                if (data.message === 'User has not taken the quiz yet.') {
+                    setQuizPromptVisible(true);
+                    const interval = setInterval(() => {
+                        setCountdown(prevCountdown => prevCountdown - 1);
+                    }, 1000);
+                    setTimeout(() => {
+                        clearInterval(interval);
+                        navigate('/quizpage');
+                    }, 3000);
                 }
 
                 data.recommended_professors.forEach(professor => {
                     professor.department = professor.department.split(';').map(dept => removeDepartmentPrefix(dept.trim())).join('; ');
                 });
 
-                if (data.message === 'Quiz result not found for the given user ID.') {
+                if (data.message === 'User has not taken the quiz yet.') {
                     setQuizPromptVisible(true);
                     const interval = setInterval(() => {
                         setCountdown(prevCountdown => prevCountdown - 1);
@@ -76,7 +82,6 @@ const RecommendedProfessorsPage = () => {
                 }
                 setIsLoading(false);
             } catch (error) {
-                console.error('Error fetching data:', error);
                 setIsLoading(false);
             }
         };
