@@ -1,10 +1,9 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from '../navBar/NavBar';
 import NewNavBar from '../navBar/newNavBar';
 import './accountsettings.css';
 import defaultProfilePic from "../../images/eye.png";
 import { useNavigate } from 'react-router-dom';
-
 
 const AccountSettingsPage = () => {
     const [profilePic, setProfilePic] = useState(null);
@@ -16,13 +15,41 @@ const AccountSettingsPage = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const quizResult = localStorage.getItem('quizResult') || 'No quiz result yet';
+    const [quizResult, setQuizResult] = useState('No quiz result yet'); // Initialize quizResult state
     const [isPasswordSection, setIsPasswordSection] = useState(true); 
-
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
+    const navigate = useNavigate();
 
     useEffect(() => {
+        const sessionId = localStorage.getItem('sessionID');
+        const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
+
+        fetch(backendUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ sessionID: sessionId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                setCurrentName(data.username);
+                setQuizResult(data.quiz_result); // Update quizResult state
+            } else {
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch user data error:', error);
+            alert(`Failed to fetch user data: ${error.message}`);
+        });
+
         const handleResize = () => {
             setWindowWidth(window.innerWidth);
         };
@@ -43,8 +70,6 @@ const AccountSettingsPage = () => {
     const handleDeleteAccount = () => {
         setIsModalOpen(true);
     };
-
-    const navigate = useNavigate();
 
     const handleResetPassword = () => {
         const sessionId = localStorage.getItem('sessionID');
@@ -140,41 +165,73 @@ const AccountSettingsPage = () => {
     };
 
     const handleChangeUsername = () => {
-        const sessionId = localStorage.getItem('sessionID');
-        const newUsername = name;
+    const sessionId = localStorage.getItem('sessionID');
+    const newUsername = name;
 
-        const data = {
-            sessionID: sessionId,
-            username: newUsername
-        };
-        console.log("Data sent to backend:", data); // Print out the data
-
-        const backendUrl = 'http://localhost:8000/backend/changeUsername/changeUsername.php';
-        fetch(backendUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to update username');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Username updated successfully');
-            } else {
-                throw new Error(data.message || 'Unknown error occurred');
-            }
-        })
-        .catch(error => {
-            console.error('Update username error:', error);
-            alert(`Failed to update username: ${error.message}`);
-        });
+    const data = {
+        sessionID: sessionId,
+        username: newUsername
     };
+
+    const backendUrl = 'http://localhost:8000/backend/changeUsername/changeUsername.php';
+    fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update username');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Username updated successfully');
+            // Fetch updated user data after username change
+            fetchUserData(sessionId);
+        } else {
+            throw new Error(data.message || 'Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Update username error:', error);
+        alert(`Failed to update username: ${error.message}`);
+    });
+};
+
+const fetchUserData = (sessionId) => {
+    const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
+
+    fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sessionID: sessionId })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            setCurrentName(data.username);
+            setQuizResult(data.quiz_result);
+        } else {
+            throw new Error(data.message || 'Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Fetch user data error:', error);
+        alert(`Failed to fetch user data: ${error.message}`);
+    });
+};
+
 
     const handleSaveChanges = () => {
         if (isPasswordSection) {
