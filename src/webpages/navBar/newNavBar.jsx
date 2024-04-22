@@ -71,7 +71,9 @@ function NewNavBar() {
     return (
         <nav className="newnavbar">
             <div>
-                <img src={Logo} alt="Logo" className="newnavbar-logo" />
+                <Link to="/homepage">
+                    <img src={Logo} alt="Logo" className="newnavbar-logo" />
+                </Link>            
             </div>
             <div className="newnavbar-links">
                 <Link to="/homepage" className="newnavbar-item">Homepage</Link>
