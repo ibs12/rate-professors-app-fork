@@ -3,20 +3,19 @@
 import React, { useState } from 'react';
 import './signin.css'; 
 import eyeLogo from './Logo.png';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext'; // Import useAuth hook
 
 function Main() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { checkAuth } = useAuth();
-  const { setIsAuthenticated } = useAuth();
-  const navigate= useNavigate();
+  const { checkAuth, setIsAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-
-  const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
+  const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac";
   const apiUrl = "http://localhost:8000";
+
   const handleLogin = () => {
     // Check if the email ends with 'buffalo.edu'
     if (!email.endsWith('buffalo.edu')) {
@@ -29,7 +28,6 @@ function Main() {
       email: email,
       password: password
     };
-
 
     fetch(`${webServerUrl}/backend/login/login.php`, {
       method: 'POST',
@@ -48,16 +46,11 @@ function Main() {
     .then(data => {
       // Check if the response contains expected data
       if (data.email && data.sessionID && data.userID) {
-        // localStorage.setItem('userData', JSON.stringify(data));
         localStorage.setItem('email', data.email);
         localStorage.setItem('sessionID', data.sessionID);
         localStorage.setItem('userID', data.userID);
-        // Redirect to '/home' page
-        // checkAuth();
         setIsAuthenticated(true);
         checkQuizTaken(data.sessionID);
-
-//        navigate('/homepage');
       } else {
         // Handle unexpected response
         throw new Error('Invalid response data');
@@ -66,7 +59,6 @@ function Main() {
     .catch(error => {
       // Handle login error
       console.error('Login error:', error);
-      // Show error message in a popup
       alert('Please check your email and password input');
     });
   };
@@ -97,6 +89,12 @@ function Main() {
     });
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div className="main-container">
       <div className="bg">
@@ -114,7 +112,7 @@ function Main() {
             </div>
             <div className="input">
               <label className="label">Password</label>
-              <input className="textfield" type="password"  placeholder="Enter your password" onChange={e => setPassword(e.target.value)} />
+              <input className="textfield" type="password" placeholder="Enter your password" onChange={e => setPassword(e.target.value)} onKeyDown={handleKeyDown} />
             </div>
             <div className="forgot-password">
               <a href="#" className="link"></a>
