@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import NavBar from '../navBar/NavBar';
+import NewNavBar from '../navBar/newNavBar';
 import './accountsettings.css';
 import defaultProfilePic from "../../images/eye.png";
 import { useNavigate } from 'react-router-dom';
+
 
 const AccountSettingsPage = () => {
     const [profilePic, setProfilePic] = useState(null);
@@ -17,6 +19,19 @@ const AccountSettingsPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const quizResult = localStorage.getItem('quizResult') || 'No quiz result yet';
     const [isPasswordSection, setIsPasswordSection] = useState(true); 
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const handleProfilePicChange = (event) => {
         const file = event.target.files[0];
@@ -191,8 +206,9 @@ const AccountSettingsPage = () => {
     }
 
     return (
-        <div className="main-container">
-            <NavBar />
+        <div>
+            {windowWidth < 767 ? <NavBar /> : <NewNavBar />}
+            <div className="main-container">
             <div className="left-side">
                 <div className="profile-pic-container">
                     <label htmlFor="profile-upload" style={{ cursor: 'pointer' }}>
@@ -327,6 +343,10 @@ const AccountSettingsPage = () => {
                 </div>
             </div>
         </div>
+
+
+        </div>
+
     );
 };
 

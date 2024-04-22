@@ -1,8 +1,8 @@
 <?php
-$servername = "oceanus.cse.buffalo.edu:3306";
-$username = "jiewenhu";
-$password = "50343451";
-$dbname = "cse442_2024_spring_team_ac_db";
+$servername = "";
+$username = "";
+$password = "";
+$dbname = "";
 // Prevent XSS attacks
 header('X-XSS-Protection: 1; mode=block');
 

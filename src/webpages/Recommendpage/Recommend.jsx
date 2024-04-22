@@ -4,6 +4,8 @@ import Default from '../../images/defaultPic.png';
 import { useNavigate } from 'react-router-dom';
 import './Recommend.css';
 import NavBar from '../navBar/NavBar';
+import NewNavBar from '../navBar/newNavBar';
+
 
 const apiUrl = "http://localhost:8000"; // Assuming your backend runs on localhost port 8000
 
@@ -32,6 +34,20 @@ const RecommendedProfessorsPage = () => {
     const [isLoading, setIsLoading] = useState(true); // Add loading state
     const [countdown, setCountdown] = useState(3);
 
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -100,7 +116,7 @@ const RecommendedProfessorsPage = () => {
 
     return (
         <div>
-            <NavBar />
+            {windowWidth < 768 ? <NavBar /> : <NewNavBar />}
             <div className="recommended-professors-page-content">
                 <h1 className="recommended-professors-page-title">Recommended Professors</h1>
                 {isLoading && (
