@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from '../navBar/NavBar';
+import NewNavBar from '../navBar/newNavBar'; // Import the NewNavBar as well
+
 import './saved.css';
 import Default from '../../images/defaultPic.png';
 import TrashPic from '../../images/trash_bin.png';
@@ -20,6 +22,18 @@ const importProfessorImage = (imagePath) => {
 
 const Saved = () => {
     const [professors, setProfessors] = useState([]);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth); // State to track window width
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
 
     useEffect(() => {
         const userID = localStorage.getItem('userID'); // Get sessionID from local storage
@@ -75,8 +89,8 @@ const Saved = () => {
     };    
 
     return (
-<div>
-    <NavBar />
+    <div>
+        {windowWidth < 768 ? <NavBar /> : <NewNavBar />} // Conditional rendering based on window width
         <div className="page-content">
             <h1 className="page-title">Saved Professors</h1>
             <div className="saved-professors-container">
