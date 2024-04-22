@@ -75,7 +75,9 @@ function NavBar() {
     return (
         <nav className="navbar">
             <div>
-                <img src={Logo} alt="Logo" className="navbar-logo" />
+                <Link to="/homepage">
+                    <img src={Logo} alt="Logo" className="newnavbar-logo" />
+                </Link>            
             </div>
             <div onClick={toggleMenu} className="navbar-menu-icon-container">
                 <img src={MenuIcon} alt="Menu" className="navbar-menu-icon" />

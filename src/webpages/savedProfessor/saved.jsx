@@ -90,7 +90,7 @@ const Saved = () => {
 
     return (
     <div>
-        {windowWidth < 768 ? <NavBar /> : <NewNavBar />} // Conditional rendering based on window width
+        {windowWidth < 768 ? <NavBar /> : <NewNavBar />} 
         <div className="page-content">
             <h1 className="page-title">Saved Professors</h1>
             <div className="saved-professors-container">

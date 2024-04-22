@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ProfessorCard.css';
+import NewNavBar from '../navBar/newNavBar';
 import NavBar from '../navBar/NavBar';
+
 import defaultPic from "../../images/defaultPic.png";
 import savedIcon from "../../images/saved_icon.png";
 import savedIconColored from "../../images/saved_icon_colored.png";
@@ -39,6 +41,19 @@ const ProfessorCard = () => {
         rating: 0,
         reviews: []
     });
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         fetchProfessorInfo(name);
@@ -255,7 +270,7 @@ const ProfessorCard = () => {
 
     return (
         <div className='profile-page-professor-main'>
-            <NavBar/>
+            {windowWidth < 768 ? <NavBar /> : <NewNavBar />} 
             <div className="profile-page-professor-card">
                 <img
                     src={isSaved ? savedIconColored : savedIcon}
