@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../navBar/NavBar';
+import NewNavBar from '../navBar/newNavBar';
 import SearchIcon from '../../images/search_icon.png';
 import './homepage.css';
 
@@ -8,7 +9,18 @@ const Homepage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('professors'); // Default filter by professors
   const [searchError, setSearchError] = useState('');
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
@@ -50,12 +62,11 @@ const Homepage = () => {
 
   return (
     <div>
-      <NavBar />
+      {windowWidth < 768 ? <NavBar /> : <NewNavBar />}
       <div className="content-container">
         <div className="text-container">
           <p className="intro-text">I want to get to know ...</p>
         </div>
-
         <div className="search-container">
           <input
             className="search-input"
