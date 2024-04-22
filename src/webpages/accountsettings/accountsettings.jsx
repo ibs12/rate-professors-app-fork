@@ -12,7 +12,6 @@ const AccountSettingsPage = () => {
     const [graduationYear, setGraduationYear] = useState('');
     const [currentname, setCurrentName] = useState('');
     const [name, setName] = useState('');
-    const [coursesTaken, setCoursesTaken] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -268,16 +267,6 @@ const AccountSettingsPage = () => {
                     />
                 </div>
 
-                <div className='field-group'>
-                    <label className="field-label">Courses Taken:</label>
-                    <input
-                        type="text"
-                        placeholder="Courses Taken"
-                        value={coursesTaken}
-                        onChange={(e) => setCoursesTaken(e.target.value)}
-                        className="text-field"
-                    />
-                </div>
 
                 <hr className="divider" />
                 <div className="section-toggle-buttons">
