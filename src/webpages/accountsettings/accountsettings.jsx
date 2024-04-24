@@ -4,11 +4,14 @@ import NewNavBar from '../navBar/newNavBar';
 import './accountsettings.css';
 import defaultProfilePic from "../../images/eye.png";
 import { useNavigate } from 'react-router-dom';
+import majors from './majors';
 
 const AccountSettingsPage = () => {
     const [profilePic, setProfilePic] = useState(null);
     const [major, setMajor] = useState('');
+    const [newmajor, setNewMajor] = useState('');
     const [graduationYear, setGraduationYear] = useState('');
+    const [newgraduationYear, setNewGraduationYear] = useState('');
     const [currentname, setCurrentName] = useState('');
     const [name, setName] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
@@ -392,22 +395,25 @@ const fetchUserData = (sessionId) => {
                     {updateType === 'major' && (
                         <div className="major-update-section">
                             <div className='field-group'>
-                                <label className="field-label">New Major:</label>
-                                <input
-                                    type="text"
-                                    placeholder="Major"
-                                    value={major}
-                                    onChange={(e) => setMajor(e.target.value)}
-                                    className="text-field"
-                                />
+                            <label className="field-label">New Major:</label>
+                            <select
+                             value={newmajor}
+                             onChange={(e) => setNewMajor(e.target.value)}
+                             className="dropdown-menu"
+                             >
+                                <option value="">Select a Major</option>
+                                {majors.map((major, index) => (
+                                <option key={index} value={major}>{major}</option>
+                                ))}
+                                </select>
                             </div>
                             <div className='field-group'>
                                 <label className="field-label">New Graduation Year:</label>
                                 <input
                                     type="text"
                                     placeholder="Graduation Year"
-                                    value={graduationYear}
-                                    onChange={(e) => setGraduationYear(e.target.value)}
+                                    value={newgraduationYear}
+                                    onChange={(e) => setNewGraduationYear(e.target.value)}
                                     className="text-field"
                                 />
                             </div>
