@@ -53,6 +53,56 @@ const convertLetterGradeToNumber = (grade) => {
     }
 };
 
+const calculateAverageGPA = (data) => {
+    const courseData = {};
+
+    data.forEach(item => {
+        const { course, grade, Feedback_Quality, accessibility, clarity, difficulty, helpfulness } = item;
+
+        if (!(course in courseData)) {
+            courseData[course] = {
+                totalGPA: 0,
+                totalFeedbackQuality: 0,
+                totalAccessibility: 0,
+                totalClarity: 0,
+                totalDifficulty: 0,
+                totalHelpfulness: 0,
+                count: 0
+            };
+        }
+
+        courseData[course].totalGPA += convertLetterGradeToNumber(grade);
+        courseData[course].totalFeedbackQuality += parseInt(Feedback_Quality);
+        courseData[course].totalAccessibility += parseInt(accessibility);
+        courseData[course].totalClarity += parseInt(clarity);
+        courseData[course].totalDifficulty += parseInt(difficulty);
+        courseData[course].totalHelpfulness += parseInt(helpfulness);
+        courseData[course].count++;
+    });
+
+    const averageCourseData = {};
+    for (const course in courseData) {
+        const totalGPA = courseData[course].totalGPA;
+        const totalFeedbackQuality = courseData[course].totalFeedbackQuality;
+        const totalAccessibility = courseData[course].totalAccessibility;
+        const totalClarity = courseData[course].totalClarity;
+        const totalDifficulty = courseData[course].totalDifficulty;
+        const totalHelpfulness = courseData[course].totalHelpfulness;
+        const count = courseData[course].count;
+
+        averageCourseData[course] = {
+            averageGPA: totalGPA / count,
+            averageFeedbackQuality: totalFeedbackQuality / count,
+            averageAccessibility: totalAccessibility / count,
+            averageClarity: totalClarity / count,
+            averageDifficulty: totalDifficulty / count,
+            averageHelpfulness: totalHelpfulness / count
+        };
+    }
+    console.log(averageCourseData)
+    return averageCourseData;
+};
+
 const ProfessorCard = () => {
     const navigate = useNavigate();
     const { name } = useParams();
@@ -64,6 +114,7 @@ const ProfessorCard = () => {
     const [clarityAverage, setClarityAverage] = useState(null);
     const [helpfulnessAverage, setHelpfulnessAverage] = useState(null);
     const [averageGrade, setAverageGrade] = useState(null);
+    const [averageGPAs, setAverageGPAs] = useState({}); // State for storing average GPAs
 
     const [profname, setProfName] = useState('');
     const [profdepartment, setProfDepartment] = useState('');
@@ -178,6 +229,8 @@ const ProfessorCard = () => {
 
                     // Calculate and set averages
                     calculateAverages(updatedReviews);
+                    const averageGPAs = calculateAverageGPA(updatedReviews);
+                    setAverageGPAs(averageGPAs);
                 } else {
                     // If no reviews available, set only the basic information
                     setProfessorInfo({
@@ -366,6 +419,7 @@ const ProfessorCard = () => {
                     clarityAverage={clarityAverage}
                     helpfulnessAverage={helpfulnessAverage}
                     averageGrade={averageGrade}
+                    averageGPAs={averageGPAs}
                 />
             </div>
             <div className='profile-page-sort-button-container'>
