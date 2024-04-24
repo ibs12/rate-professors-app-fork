@@ -24,10 +24,46 @@ const importProfessorImage = (imagePath) => {
     }
 };
 
+const convertLetterGradeToNumber = (grade) => {
+    switch (grade) {
+        case 'A':
+            return 4.0;
+        case 'A-':
+            return 3.667;
+        case 'B+':
+            return 3.333;
+        case 'B':
+            return 3.0;
+        case 'B-':
+            return 2.667;
+        case 'C+':
+            return 2.333;
+        case 'C':
+            return 2.0;
+        case 'C-':
+            return 1.6667;
+        case 'D+':
+            return 1.333;
+        case 'D':
+            return 1.0;
+        case 'F':
+            return 0.0;
+        default:
+            return 0.0; // Default to 0 if grade is not recognized
+    }
+};
+
 const ProfessorCard = () => {
     const navigate = useNavigate();
     const { name } = useParams();
     const { isAuthenticated } = useAuth(); // Destructure to get isAuthenticated from AuthContext
+
+    const [difficultyAverage, setDifficultyAverage] = useState(null);
+    const [feedbackQualityAverage, setFeedbackQualityAverage] = useState(null);
+    const [accessibilityAverage, setAccessibilityAverage] = useState(null);
+    const [clarityAverage, setClarityAverage] = useState(null);
+    const [helpfulnessAverage, setHelpfulnessAverage] = useState(null);
+    const [averageGrade, setAverageGrade] = useState(null);
 
     const [profname, setProfName] = useState('');
     const [profdepartment, setProfDepartment] = useState('');
@@ -139,6 +175,9 @@ const ProfessorCard = () => {
                         rating: '-', // You may want to calculate the overall rating based on all reviews
                         reviews: updatedReviews
                     });
+
+                    // Calculate and set averages
+                    calculateAverages(updatedReviews);
                 } else {
                     // If no reviews available, set only the basic information
                     setProfessorInfo({
@@ -155,13 +194,49 @@ const ProfessorCard = () => {
             });
 
 
-    };    
-        const checkSavedStatus = (Data) => {
-            const [name, department, path, ID] = Data.split('+');
-            setProfName(name);
-            setProfDepartment(department);
-            setPfppath(path);
-            setProid(ID);
+    };
+
+    const calculateAverages = (reviews) => {
+        let difficultySum = 0;
+        let feedbackQualitySum = 0;
+        let accessibilitySum = 0;
+        let claritySum = 0;
+        let helpfulnessSum = 0;
+        let totalCount = reviews.length;
+
+        reviews.forEach(review => {
+            difficultySum += parseInt(review.difficulty);
+            feedbackQualitySum += parseInt(review.Feedback_Quality);
+            accessibilitySum += parseInt(review.accessibility);
+            claritySum += parseInt(review.clarity);
+            helpfulnessSum += parseInt(review.helpfulness);
+        });
+
+        setDifficultyAverage(difficultySum / totalCount);
+        setFeedbackQualityAverage(feedbackQualitySum / totalCount);
+        setAccessibilityAverage(accessibilitySum / totalCount);
+        setClarityAverage(claritySum / totalCount);
+        setHelpfulnessAverage(helpfulnessSum / totalCount);
+        setAverageGrade(calculateAverageGrade(reviews));
+    };
+
+    const calculateAverageGrade = (reviews) => {
+        let totalGrade = 0;
+        let totalCount = reviews.length;
+
+        reviews.forEach(review => {
+            totalGrade += convertLetterGradeToNumber(review.grade);
+        });
+
+        return totalGrade / totalCount;
+    };
+
+    const checkSavedStatus = (Data) => {
+        const [name, department, path, ID] = Data.split('+');
+        setProfName(name);
+        setProfDepartment(department);
+        setPfppath(path);
+        setProid(ID);
         const sessionID = localStorage.getItem('sessionID');
     
         // If session ID is not found, handle the error
@@ -263,10 +338,6 @@ const ProfessorCard = () => {
             </div>
         );
     };
-        // Dummy data for the InfoGraphicsCard, replace with actual data
-    const dummyAverageGPA = "3.4";
-
-
 
     return (
         <div className='profile-page-professor-main'>
@@ -289,7 +360,12 @@ const ProfessorCard = () => {
             </div>
             <div>
                 <InfoGraphicsCard 
-                    averageGPA={dummyAverageGPA} 
+                    difficultyAverage={difficultyAverage}
+                    feedbackQualityAverage={feedbackQualityAverage}
+                    accessibilityAverage={accessibilityAverage}
+                    clarityAverage={clarityAverage}
+                    helpfulnessAverage={helpfulnessAverage}
+                    averageGrade={averageGrade}
                 />
             </div>
             <div className='profile-page-sort-button-container'>
@@ -323,6 +399,8 @@ const ProfessorCard = () => {
 };
 
 export default ProfessorCard;
+
+
 // //import React, { useState, useEffect } from 'react';
 // import { useParams, useNavigate } from 'react-router-dom';
 // import './ProfessorCard.css';
