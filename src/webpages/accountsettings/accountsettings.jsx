@@ -18,6 +18,7 @@ const AccountSettingsPage = () => {
     const [quizResult, setQuizResult] = useState('No quiz result yet'); // Initialize quizResult state
     const [isPasswordSection, setIsPasswordSection] = useState(true); 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [updateType, setUpdateType] = useState('password');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -119,9 +120,11 @@ const AccountSettingsPage = () => {
     };
     
 
-    const toggleSection = () => {
-        setIsPasswordSection(prev => !prev);
+    const toggleSection = (type) => {
+        setUpdateType(type);
     };
+    
+
 
     const handleConfirmDelete = () => {
         const email = localStorage.getItem('email');
@@ -278,7 +281,9 @@ const fetchUserData = (sessionId) => {
                             onChange={handleProfilePicChange}
                         />
                     </label>
+
                 </div>
+                
                 <div className="field-container">
                     <input
                         type="text"
@@ -300,6 +305,7 @@ const fetchUserData = (sessionId) => {
                     <button classname = "retake-quiz-button" onClick= {handleRetakeQuiz}>
                         Retake Quiz?
                     </button>
+
                 </div>
                 <div className="delete-account-container">
                     <button className="delete-account-button" onClick={handleDeleteAccount}>
@@ -323,77 +329,98 @@ const fetchUserData = (sessionId) => {
                         className="text-field"
                     />
                 </div>
-
-
                 <hr className="divider" />
                 <div className="section-toggle-buttons">
-                    <button className={isPasswordSection ? 'active' : ''} onClick={toggleSection}>
-                        Change Password
-                    </button>
-                    <button className={!isPasswordSection ? 'active' : ''} onClick={toggleSection}>
-                        Update Username
-                    </button>
-                </div>
-                {isPasswordSection && (
-                    <div className="password-change-section">
-                        <div className='field-group'>
-                            <label className="field-label">Current Password:</label>
-                            <input
-                                type="password"
-                                placeholder="Current Password"
-                                value={currentPassword}
-                                onChange={(e) => setCurrentPassword(e.target.value)}
-                                className="text-field"
-                            />
-                        </div>
-                        <div className='field-group'>
-                            <label className="field-label">New Password:</label>
-                            <input
-                                type="password"
-                                placeholder="New Password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                className="text-field"
-                            />
-                        </div>
-                        <div className='field-group'>
-                            <label className="field-label">Confirm New Password:</label>
-                            <input
-                                type="password"
-                                placeholder="Confirm New Password"
-                                value={confirmNewPassword}
-                                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                                className="text-field"
-                            />
-                        </div>
+                        <button className={updateType === 'password' ? 'active' : ''} onClick={() => toggleSection('password')}>
+                            Change Password
+                        </button>
+                        <button className={updateType === 'username' ? 'active' : ''} onClick={() => toggleSection('username')}>
+                            Update Username
+                        </button>
+                        <button className={updateType === 'major' ? 'active' : ''} onClick={() => toggleSection('major')}>
+                            Update Major & Graduation Date
+                        </button>
                     </div>
-                )}
-                {!isPasswordSection && (
-                    <div className="username-update-section">
-                        <div className='field-group'>
-                            <label className="field-label">New Username:</label>
-                            <input
-                                type="text"
-                                placeholder="Name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="text-field"
-                            />
+                    {updateType === 'password' && (
+                        <div className="password-change-section">
+                            <div className='field-group'>
+                                <label className="field-label">Current Password:</label>
+                                <input
+                                    type="password"
+                                    placeholder="Current Password"
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                    className="text-field"
+                                />
+                            </div>
+                            <div className='field-group'>
+                                <label className="field-label">New Password:</label>
+                                <input
+                                    type="password"
+                                    placeholder="New Password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    className="text-field"
+                                />
+                            </div>
+                            <div className='field-group'>
+                                <label className="field-label">Confirm New Password:</label>
+                                <input
+                                    type="password"
+                                    placeholder="Confirm New Password"
+                                    value={confirmNewPassword}
+                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                    className="text-field"
+                                />
+                            </div>
                         </div>
+                    )}
+                    {updateType === 'username' && (
+                        <div className="username-update-section">
+                            <div className='field-group'>
+                                <label className="field-label">New Username:</label>
+                                <input
+                                    type="text"
+                                    placeholder="Name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="text-field"
+                                />
+                            </div>
+                        </div>
+                    )}
+                    {updateType === 'major' && (
+                        <div className="major-update-section">
+                            <div className='field-group'>
+                                <label className="field-label">New Major:</label>
+                                <input
+                                    type="text"
+                                    placeholder="Major"
+                                    value={major}
+                                    onChange={(e) => setMajor(e.target.value)}
+                                    className="text-field"
+                                />
+                            </div>
+                            <div className='field-group'>
+                                <label className="field-label">New Graduation Year:</label>
+                                <input
+                                    type="text"
+                                    placeholder="Graduation Year"
+                                    value={graduationYear}
+                                    onChange={(e) => setGraduationYear(e.target.value)}
+                                    className="text-field"
+                                />
+                            </div>
+                        </div>
+                    )}
+                    <div className="button-container">
+                        <button className="save-button" onClick={handleSaveChanges}>
+                            Save Changes
+                        </button>
                     </div>
-                )}
-                <div className="button-container">
-                    <button className="save-button" onClick={handleSaveChanges}>
-                        Save Changes
-                    </button>
                 </div>
             </div>
         </div>
-
-
-        </div>
-
     );
 };
-
 export default AccountSettingsPage;
