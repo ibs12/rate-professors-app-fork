@@ -382,9 +382,9 @@ const ReviewForm = ({ professorImage }) => {
               )}
             </div>
             <div className="review-page-form-group">
-              <label htmlFor="difficulty">Difficulty:</label>
+              <label htmlFor="difficulty">Ease of Class:</label>
               <select id="difficulty" name="difficulty" value={formData.difficulty} onChange={handleInputChange}>
-                <option value="">-- Select Difficulty --</option>
+                <option value="">-- Select Ease of Class: --</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>

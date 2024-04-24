@@ -27,7 +27,7 @@ const InfoGraphicsCard = ({
         if (selectedCourse === 'overall') {
             return (
                 <>
-                    <p>Average Difficulty: {renderValue(difficultyAverage)}</p>
+                    <p>Average Ease of Class: {renderValue(difficultyAverage)}</p>
                     <p>Average Feedback Quality: {renderValue(feedbackQualityAverage)}</p>
                     <p>Average Accessibility: {renderValue(accessibilityAverage)}</p>
                     <p>Average Clarity: {renderValue(clarityAverage)}</p>
@@ -39,7 +39,7 @@ const InfoGraphicsCard = ({
             const courseAverages = averageGPAs[selectedCourse];
             return (
                 <>
-                    <p>Average Difficulty for {selectedCourse}: {renderValue(courseAverages.averageDifficulty)}</p>
+                    <p>Average Ease of Class for {selectedCourse}: {renderValue(courseAverages.averageDifficulty)}</p>
                     <p>Average Feedback Quality for {selectedCourse}: {renderValue(courseAverages.averageFeedbackQuality)}</p>
                     <p>Average Accessibility for {selectedCourse}: {renderValue(courseAverages.averageAccessibility)}</p>
                     <p>Average Clarity for {selectedCourse}: {renderValue(courseAverages.averageClarity)}</p>
