@@ -237,15 +237,14 @@ const fetchUserData = (sessionId) => {
         alert(`Failed to fetch user data: ${error.message}`);
     });
 };
+const handleSaveChanges = () => {
+    if (updateType === 'password') {
+        handleResetPassword();
+    } else if (updateType === 'username') {
+        handleChangeUsername();
+    }
+};
 
-
-    const handleSaveChanges = () => {
-        if (isPasswordSection) {
-            handleResetPassword();
-        } else {
-            handleChangeUsername();
-        }
-    };
 
     const SimpleModal = ({ isOpen, onClose, onConfirm }) => {
         if (!isOpen) return null;
