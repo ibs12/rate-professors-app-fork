@@ -45,6 +45,8 @@ const AccountSettingsPage = () => {
             if (data.status === 'success') {
                 setCurrentName(data.username);
                 setQuizResult(data.quiz_result); // Update quizResult state
+                setMajor(data.major); // Update major state
+                setGraduationYear(data.graduationYear); // Update graduation year state
             } else {
                 throw new Error(data.message || 'Unknown error occurred');
             }
