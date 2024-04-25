@@ -377,13 +377,7 @@ const AccountSettingsPage = () => {
             <div className="right-side">
                 <div className='field-group'>
                     <label className="field-label">Current Username:</label>
-                    <input
-                        type="text"
-                        placeholder="Name"
-                        value={currentname}
-                        onChange={(e) => setCurrentName(e.target.value)}
-                        className="text-field"
-                    />
+                    <div className="text-display">{currentname}</div>
                 </div>
                 <hr className="divider" />
                 <div className="section-toggle-buttons">
