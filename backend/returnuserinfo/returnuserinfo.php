@@ -45,8 +45,8 @@ if ($sessionResult->num_rows > 0) {
     $sessionRow = $sessionResult->fetch_assoc();
     $userID = $sessionRow['userID'];
 
-    // Query to get username and quiz_result from users table
-    $userQuery = "SELECT username, quiz_result FROM users WHERE userID = ?";
+    // Query to get username, quiz_result, major, and graduationYear from users table
+    $userQuery = "SELECT username, quiz_result, major, graduationYear FROM users WHERE userID = ?";
     $stmt = $conn->prepare($userQuery);
     $stmt->bind_param("i", $userID);
     $stmt->execute();
@@ -56,9 +56,11 @@ if ($sessionResult->num_rows > 0) {
         $userRow = $userResult->fetch_assoc();
         $username = $userRow['username'];
         $quizResult = $userRow['quiz_result'];
+        $major = $userRow['major'];
+        $graduationYear = $userRow['graduationYear'];
 
-        // Return username and quiz_result
-        echo json_encode(["status" => "success", "username" => $username, "quiz_result" => $quizResult]);
+        // Return username, quiz_result, major, and graduationYear
+        echo json_encode(["status" => "success", "username" => $username, "quiz_result" => $quizResult, "major" => $major, "graduationYear" => $graduationYear]);
     } else {
         echo json_encode(["status" => "error", "message" => "User not found."]);
     }
