@@ -29,6 +29,9 @@ const AccountSettingsPage = () => {
     const [usernameUpdateMessage, setUsernameUpdateMessage] = useState('');
     const [passwordUpdateMessage, setPasswordUpdateMessage] = useState('');
     const navigate = useNavigate();
+    const [semester, setSemester] = useState('');
+    const graduationSemesterYear = `${semester} ${newgraduationYear}`;
+
 
     useEffect(() => {
         const sessionId = localStorage.getItem('sessionID');
@@ -243,13 +246,37 @@ const AccountSettingsPage = () => {
         });
     };
 
+    const [graduationYearFormatError, setGraduationYearFormatError] = useState('');
+    const [semesterErrorMessage, setSemesterErrorMessage] = useState('');
+
+
     const handleUpdateMajorAndGraduation = () => {
         const sessionId = localStorage.getItem('sessionID');
-    
+
+            // Check if newgraduationYear is a 4-digit number
+        if (!/^\d{4}$/.test(newgraduationYear)) {
+            setGraduationYearFormatError('Please enter a valid 4-digit graduation year.');
+            return; // Stop the function if the year format is incorrect
+        } else {
+            setGraduationYearFormatError(''); // Clear any existing error messages if the format is now correct
+        }
+
+            // Validation for semester
+            if (!semester) {
+                setSemesterErrorMessage('Please select a semester.');
+            } else {
+                setSemesterErrorMessage('');
+            }
+
+            // Stop function execution if there are any validation errors
+            if (!semester || !/^\d{4}$/.test(newgraduationYear)) {
+                return;
+            }
+
         const data = {
             sessionID: sessionId,
             major: newmajor,
-            graduationYear: newgraduationYear
+            graduationYear: graduationSemesterYear
         };
     
         const backendUrl = 'http://localhost:8000/backend/addmajorandgraduationdata/addmajorandgraduationdata.php';
@@ -269,7 +296,7 @@ const AccountSettingsPage = () => {
         .then(data => {
             if (data.status === 'success') {
                 setMajor(newmajor); // Update major state
-                setGraduationYear(newgraduationYear); // Update graduation year state
+                setGraduationYear(graduationSemesterYear); // Update graduation year state
                 setMajorUpdateMessage('Major updated successfully');
                 setGraduationUpdateMessage('Graduation year updated successfully');
             } else {
@@ -319,6 +346,8 @@ const AccountSettingsPage = () => {
     const handleRetakeQuiz = () =>{
         navigate('/quizPage');
     }
+
+
 
     return (
         <div>
@@ -459,14 +488,33 @@ const AccountSettingsPage = () => {
                                 </select>
                             </div>
                             <div className='field-group'>
-                                <label className="field-label">New Graduation Year:</label>
+                                <label className="field-label">Semester:</label>
+                                <select
+                                    value={semester}
+                                    onChange={(e) => setSemester(e.target.value)}
+                                    className="dropdown-menu"
+                                >
+                                    <option value="">Select a Semester</option>
+                                    <option value="Spring">Spring</option>
+                                    <option value="Summer">Summer</option>
+                                    <option value="Fall">Fall</option>
+                                    <option value="Winter">Winter</option>
+                                </select>
+                                {semesterErrorMessage && <div className='error-message'>{semesterErrorMessage}</div>}
+
+                            </div>
+                            <div className='field-group'>
+                                <label className="field-label">Graduation Year:</label>
                                 <input
                                     type="text"
-                                    placeholder="Graduation Year"
+                                    placeholder="YYYY"
                                     value={newgraduationYear}
                                     onChange={(e) => setNewGraduationYear(e.target.value)}
                                     className="text-field"
+                                    pattern="\d*"
                                 />
+                                {graduationYearFormatError && <div className='error-message'>{graduationYearFormatError}</div>}
+
                             </div>
                             <div className='error-message'>{majorUpdateMessage}</div>
                             <div className='error-message'>{graduationUpdateMessage}</div>
