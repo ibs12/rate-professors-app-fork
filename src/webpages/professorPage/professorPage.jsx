@@ -107,6 +107,11 @@ const ProfessorCard = () => {
     const navigate = useNavigate();
     const { name } = useParams();
     const { isAuthenticated } = useAuth(); // Destructure to get isAuthenticated from AuthContext
+    const [showInfoCard, setShowInfoCard] = useState(false); // Added for toggling InfoGraphicsCard
+
+    const toggleInfoCard = () => {
+        setShowInfoCard(!showInfoCard); // Toggle the visibility of the InfoGraphicsCard
+    };
 
     const [difficultyAverage, setDifficultyAverage] = useState(null);
     const [feedbackQualityAverage, setFeedbackQualityAverage] = useState(null);
@@ -395,6 +400,8 @@ const ProfessorCard = () => {
     return (
         <div className='profile-page-professor-main'>
             {windowWidth < 768 ? <NavBar /> : <NewNavBar />} 
+
+
             <div className="profile-page-professor-card">
                 <img
                     src={isSaved ? savedIconColored : savedIcon}
@@ -411,7 +418,14 @@ const ProfessorCard = () => {
                     <span>{professorInfo.rating}</span>
                 </div>
             </div>
-            <div>
+            <div className="profile-page-toggle-info-card">
+                <span onClick={toggleInfoCard}>
+                    {showInfoCard ? "▲ Click here to view less " : "▼ Click here to view more "}
+                </span>
+            </div>
+
+            
+            {showInfoCard && (
                 <InfoGraphicsCard 
                     difficultyAverage={difficultyAverage}
                     feedbackQualityAverage={feedbackQualityAverage}
@@ -421,7 +435,8 @@ const ProfessorCard = () => {
                     averageGrade={averageGrade}
                     averageGPAs={averageGPAs}
                 />
-            </div>
+            )}
+            
             <div className='profile-page-sort-button-container'>
                 {/*<button className='profile-page-sort-button' onClick={() => sortReviews("rating")}>Sort by Rating</button>*/}
                 {/* <button className='profile-page-sort-button' onClick={() => sortReviews("author")}>Sort by Author</button> */}
