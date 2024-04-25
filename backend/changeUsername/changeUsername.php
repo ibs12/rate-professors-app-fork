@@ -38,21 +38,30 @@ function updateUsername($userId, $newUsername)
 {
     $conn = getDbConnection();
 
-    // Prepare statement to update username
     if ($stmt = $conn->prepare("UPDATE users SET username = ? WHERE userID = ?")) {
         $stmt->bind_param("si", $newUsername, $userId);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            // Username updated successfully
-            echo json_encode(["status" => "success", "message" => "Username updated successfully."]);
-        } else {
-            // No rows affected, username not updated
-            http_response_code(400); // Bad Request
-            echo json_encode(["status" => "error", "message" => "Failed to update username."]);
-        }
+            // Username updated successfully in users table, now update prof_reviews
+            $stmt->close(); // Close the previous statement
 
-        $stmt->close();
+            // Prepare statement to update username in prof_reviews table
+            if ($stmt = $conn->prepare("UPDATE prof_reviews SET username = ? WHERE userID = ?")) {
+                $stmt->bind_param("si", $newUsername, $userId);
+                $stmt->execute();
+
+                if ($stmt->affected_rows > 0) {
+                    // Username updated successfully in prof_reviews
+                    $conn->commit(); // Commit the transaction
+                    echo json_encode(["status" => "success", "message" => "Username updated successfully in both tables."]);
+                } else {
+                    // No rows affected in prof_reviews, still commit because user table was updated
+                    $conn->commit();
+                    echo json_encode(["status" => "success", "message" => "Username updated in users table but no matching records in prof_reviews."]);
+                }
+            }
+        }
     } else {
         // Statement preparation failed
         http_response_code(500); // Server error
@@ -179,4 +188,3 @@ if ($stmt = $conn->prepare("SELECT userID FROM sessions WHERE sessionID = ?")) {
 }
 
 $conn->close();
-?>

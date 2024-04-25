@@ -36,6 +36,8 @@ const MReviewForm = ({ professorImage }) => {
   const [semesters, setSemesters] = useState(['Spring', 'Summer', 'Fall', 'Winter']);
   const [coursePrefixes, setCoursePrefixes] = useState([]);
   const [courseNumbers, setCourseNumbers] = useState([]);
+  // const [currentname, setCurrentName] = useState('');
+  // const [major, setMajor] = useState('');
 
   useEffect(() => {
     const [profNameParam, departmentParam, path, ID] = name.split('+');
@@ -234,6 +236,8 @@ const MReviewForm = ({ professorImage }) => {
     const reviewData = {
       userID: localStorage.getItem('userID'), // Assuming you store userID in localStorage after login
       professorID: ID, // Assuming professorID is derived from pfppath
+      // author: currentname,
+      // authormajor: major,
       difficulty: formData.difficulty,
       helpfulness: formData.helpfulness,
       clarity: formData.clarity,

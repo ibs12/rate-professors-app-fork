@@ -14,6 +14,7 @@ import './infoGraphicsCard.css';
 const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
 const apiUrl = "http://localhost:8000";
 
+
 const importProfessorImage = (imagePath) => {
     try {
         const images = require.context('../../images/professorpfp', false, /\.(png|jpe?g|svg)$/);
@@ -120,6 +121,8 @@ const ProfessorCard = () => {
     const [helpfulnessAverage, setHelpfulnessAverage] = useState(null);
     const [averageGrade, setAverageGrade] = useState(null);
     const [averageGPAs, setAverageGPAs] = useState({}); // State for storing average GPAs
+    
+
 
     const [profname, setProfName] = useState('');
     const [profdepartment, setProfDepartment] = useState('');
@@ -383,11 +386,12 @@ const ProfessorCard = () => {
         setProfessorInfo({ ...professorInfo, reviews: sortedReviews });
     };
 
-    const Review = ({ author, comment, rating, term, course, grade }) => {
+    const Review = ({ author, comment, rating, term, course, grade, major }) => {
         return (
             <div className="profile-page-review">
                 <div className="profile-page-review-header">
-                    <h4>Anonymous</h4>
+                    <h4 className="author">{author}</h4>
+                    <h4>{major}</h4>
                     <span>{term} - {course}</span>
                     <span>Grade: {grade}</span>
                     <span>Rating: {rating}</span>
@@ -449,7 +453,8 @@ const ProfessorCard = () => {
                     professorInfo.reviews.map((review, index) => (
                         <Review
                             key={index}
-                            author={review.author}
+                            author={review.username}
+                            major={review.major}
                             comment={review.comment}
                             rating={review.rating}
                             term={review.term}

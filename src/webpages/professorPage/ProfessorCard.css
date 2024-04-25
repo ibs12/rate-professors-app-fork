@@ -84,6 +84,10 @@
     
 }
 
+.author{
+    align-items: left;
+}
+
 .profile-page-review h4 {
     margin: 0;
     color: #333;

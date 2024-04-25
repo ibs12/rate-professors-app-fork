@@ -24,12 +24,14 @@ function getDbConnection()
     return $conn;
 }
 
-function validateGrade($grade) {
+function validateGrade($grade)
+{
     $validGrades = array("A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F");
     return in_array($grade, $validGrades);
 }
 
-function addGradeColumnIfNeeded($conn) {
+function addGradeColumnIfNeeded($conn)
+{
     $result = $conn->query("SHOW COLUMNS FROM prof_reviews LIKE 'grade'");
     if ($result->num_rows === 0) {
         $conn->query("ALTER TABLE prof_reviews ADD COLUMN grade VARCHAR(5) DEFAULT NULL");
@@ -90,8 +92,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $conn = getDbConnection();
     // Add 'grade' column if it doesn't exist
     addGradeColumnIfNeeded($conn);
-    $stmt = $conn->prepare("INSERT INTO prof_reviews (userID, professorID, course, term, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, comment, grade) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("iissiiiiiss", $userId, $professorId, $course, $term, $difficulty, $helpfulness, $clarity, $feedbackQuality, $accessibility, $comment, $grade);
+    $usernameQuery = $conn->prepare("SELECT username FROM users WHERE userID = ?");
+    $usernameQuery->bind_param("i", $userId);
+    $usernameQuery->execute();
+    $usernameResult = $usernameQuery->get_result();
+    if ($usernameResult->num_rows == 0) {
+        http_response_code(404);
+        echo json_encode(["error" => "User not found"]);
+        exit;
+    }
+    $usernameRow = $usernameResult->fetch_assoc();
+    $username = $usernameRow['username'];
+    $usernameQuery->close();
+
+    $majorQuery = $conn->prepare("SELECT major FROM users WHERE userID = ?");
+    $majorQuery->bind_param("i", $userId);
+    $majorQuery->execute();
+    $majorResult = $usernameQuery->get_result();
+    if ($usernameResult->num_rows == 0) {
+        http_response_code(404);
+        echo json_encode(["error" => "User not found"]);
+        exit;
+    }
+    $majorRow = $majorResult->fetch_assoc();
+    $major = $majorRow['major'];
+    $usernameQuery->close();
+
+    // Prepare and bind
+    $stmt = $conn->prepare("INSERT INTO prof_reviews (userID, username, major, professorID, course, term, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, comment, grade) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ississiiiiiss", $userId, $username, $major, $professorId, $course, $term, $difficulty, $helpfulness, $clarity, $feedbackQuality, $accessibility, $comment, $grade);
 
     if ($stmt->execute()) {
         echo json_encode(["message" => "New review added successfully.", "status" => "success"]);

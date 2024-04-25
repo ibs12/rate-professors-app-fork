@@ -9,8 +9,13 @@ import { useAuth } from '../../AuthContext'; // Import useAuth hook
 function Main() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [currentname, setCurrentName] = useState('');
+  const [major, setMajor] = useState('');
+  const [graduationYear, setGraduationYear] = useState('');
+  const [quizResult, setQuizResult] = useState('No quiz result yet');
 
   const { checkAuth, setIsAuthenticated } = useAuth();
+  
   const navigate = useNavigate();
 
   const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac";
@@ -51,6 +56,7 @@ function Main() {
         localStorage.setItem('userID', data.userID);
         setIsAuthenticated(true);
         checkQuizTaken(data.sessionID);
+        fetchUserData(data.sessionID);
       } else {
         // Handle unexpected response
         throw new Error('Invalid response data');
@@ -62,6 +68,38 @@ function Main() {
       alert('Please check your email and password input');
     });
   };
+  const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
+
+  const fetchUserData = (sessionID) => {
+    fetch(backendUrl, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sessionID: sessionID })
+    })
+    .then(response => {
+      if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.status === 'success') {
+          setCurrentName(data.username);
+          setQuizResult(data.quiz_result); 
+          setMajor(data.major); 
+          setGraduationYear(data.graduationYear);
+          console.log(data);
+      } else {
+          throw new Error(data.message || 'Unknown error occurred');
+      }
+    })
+    .catch(error => {
+      console.error('Fetch user data error:', error);
+      alert(`Failed to fetch user data: ${error.message}`);
+    });
+  }
 
   const checkQuizTaken = (sessionID) => {
     fetch(`${apiUrl}/backend/checkquizstatus/checkquizstatus.php`, {
