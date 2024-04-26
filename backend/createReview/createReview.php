@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $majorQuery = $conn->prepare("SELECT major FROM users WHERE userID = ?");
     $majorQuery->bind_param("i", $userId);
     $majorQuery->execute();
-    $majorResult = $usernameQuery->get_result();
+    $majorResult = $majorQuery->get_result();
     if ($usernameResult->num_rows == 0) {
         http_response_code(404);
         echo json_encode(["error" => "User not found"]);
@@ -116,10 +116,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     $majorRow = $majorResult->fetch_assoc();
     $major = $majorRow['major'];
-    $usernameQuery->close();
+    $majorQuery->close();
 
     // Prepare and bind
-    $stmt = $conn->prepare("INSERT INTO prof_reviews (userID, username, major, professorID, course, term, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, comment, grade) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO prof_reviews (userID, username, major, professorID, course, term, difficulty, helpfulness, clarity, Feedback_Quality, accessibility, comment, grade) VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ississiiiiiss", $userId, $username, $major, $professorId, $course, $term, $difficulty, $helpfulness, $clarity, $feedbackQuality, $accessibility, $comment, $grade);
 
     if ($stmt->execute()) {
