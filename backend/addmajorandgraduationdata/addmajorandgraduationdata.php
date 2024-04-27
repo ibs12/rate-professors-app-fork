@@ -1,27 +1,22 @@
 <?php
 require_once '../db_config.php';
 
-// Set content type to JSON
 header('Content-Type: application/json');
-
-// Set up error reporting
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
-// Prevent MIME sniffing
 header('X-Content-Type-Options: nosniff');
 
-// Check if request method is OPTIONS (preflight request)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
-// Get JSON content from the request body
 $data = json_decode(file_get_contents('php://input'), true);
 
-// Validate required fields
 if (!isset($data['sessionID']) || !isset($data['major']) || !isset($data['graduationYear'])) {
-    $missingFields = array_filter(['sessionID', 'major', 'graduationYear'], fn ($field) => !isset($data[$field]));
+    $missingFields = [];
+    if (!isset($data['sessionID'])) $missingFields[] = "sessionID";
+    if (!isset($data['major'])) $missingFields[] = "major";
+    if (!isset($data['graduationYear'])) $missingFields[] = "graduationYear";
     echo json_encode(["status" => "error", "message" => "The following fields are required: " . implode(', ', $missingFields)]);
     exit;
 }
@@ -30,32 +25,29 @@ $sessionID = $data['sessionID'];
 $major = $data['major'];
 $graduationYear = $data['graduationYear'];
 
-// Validate non-empty fields
-$emptyFields = array_filter(['sessionID' => $sessionID, 'major' => $major, 'graduationYear' => $graduationYear], fn ($value) => empty($value));
-if (!empty($emptyFields)) {
-    echo json_encode(["status" => "error", "message" => "The following fields cannot be empty: " . implode(', ', array_keys($emptyFields))]);
+if (empty($sessionID) || empty($major) || empty($graduationYear)) {
+    $emptyFields = [];
+    if (empty($sessionID)) $emptyFields[] = "sessionID";
+    if (empty($major)) $emptyFields[] = "major";
+    if (empty($graduationYear)) $emptyFields[] = "graduationYear";
+    echo json_encode(["status" => "error", "message" => "The following fields cannot be empty: " . implode(', ', $emptyFields)]);
     exit;
 }
 
-
-// Function to establish database connection
 function getDbConnection()
 {
     global $servername, $username, $password, $dbname;
     $conn = new mysqli($servername, $username, $password, $dbname);
-
     if ($conn->connect_error) {
-        http_response_code(500); // Server error
+        http_response_code(500);
         echo json_encode(["message" => "Failed to connect to the database: " . $conn->connect_error]);
         exit;
     }
     return $conn;
 }
 
-// Connect to the database
 $conn = getDbConnection();
 
-// Retrieve userID from sessions table based on sessionID
 $sql = "SELECT userID FROM sessions WHERE sessionID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $sessionID);
@@ -66,7 +58,6 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $userID = $row['userID'];
 
-    // Fetch current major and graduation year
     $checkUserSql = "SELECT major, graduationYear FROM users WHERE userID = ?";
     $stmt = $conn->prepare($checkUserSql);
     $stmt->bind_param("i", $userID);
@@ -76,32 +67,28 @@ if ($result->num_rows > 0) {
     $oldMajor = $userRow['major'];
     $oldGraduationYear = $userRow['graduationYear'];
 
-    // Determine changes
-    $majorChanged = $major !== $oldMajor;
-    $graduationYearChanged = $graduationYear !== $oldGraduationYear;
+    $majorChanged = ($major !== $oldMajor);
+    $graduationYearChanged = ($graduationYear !== $oldGraduationYear);
 
-    // Update user's major and graduation year if changed
     if ($majorChanged || $graduationYearChanged) {
-        $updateUserSql = "UPDATE users SET major = ?, graduationYear = ? WHERE userID = ?";
-        $stmt = $conn->prepare($updateUserSql);
+        $updateSql = "UPDATE users SET major = ?, graduationYear = ? WHERE userID = ?";
+        $stmt = $conn->prepare($updateSql);
         $stmt->bind_param("ssi", $major, $graduationYear, $userID);
-        $stmt->execute();
+        if ($stmt->execute()) {
+            $message = "User's ID: $userID\n";
+            $message .= $majorChanged ? "Old major: $oldMajor, New major: $major\n" : "Major: $major is the same as the old one\n";
+            $message .= $graduationYearChanged ? "Old graduation date: $oldGraduationYear, New graduation date: $graduationYear\n" : "Graduation date: $graduationYear is the same as the old one\n";
 
-        // Update major in prof_reviews table if major has changed
-        if ($majorChanged) {
+            // Update major in prof_reviews as well
             $updateProfReviewsSql = "UPDATE prof_reviews SET major = ? WHERE userID = ?";
             $stmt = $conn->prepare($updateProfReviewsSql);
             $stmt->bind_param("si", $major, $userID);
             $stmt->execute();
-        }
 
-        // Prepare message about changes
-        $changes = [
-            "userID" => $userID,
-            "major" => $majorChanged ? "Changed from $oldMajor to $major" : "Unchanged",
-            "graduationYear" => $graduationYearChanged ? "Changed from $oldGraduationYear to $graduationYear" : "Unchanged"
-        ];
-        echo json_encode(["status" => "success", "message" => "Update successful.", "changes" => $changes]);
+            echo json_encode(["status" => "success", "message" => "User's major and graduation year updated successfully in users and prof_reviews tables.", "changes" => $message]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Failed to update user's major and graduation year."]);
+        }
     } else {
         echo json_encode(["status" => "success", "message" => "No updates necessary."]);
     }
