@@ -71,7 +71,7 @@ function Main() {
 
 
   const checkQuizTaken = (sessionID) => {
-    fetch(`${apiUrl}/backend/checkquizstatus/checkquizstatus.php`, {
+    fetch(`${webServerUrl}/backend/checkquizstatus/checkquizstatus.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
