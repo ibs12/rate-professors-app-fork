@@ -25,11 +25,11 @@ const Quiz = () => {
   };
 
   const calculateResult = () => {
-    /*
+
     if (Object.keys(answers).length !== questions.length) {
       setErrorMessage('Please fill out all the questions');
       return;
-    }*/
+    }
 
     const counts = { A: 0, B: 0, C: 0, D: 0, E: 0 };
     Object.values(answers).forEach(answer => counts[answer]++);
