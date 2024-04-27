@@ -56,7 +56,6 @@ function Main() {
         localStorage.setItem('userID', data.userID);
         setIsAuthenticated(true);
         checkQuizTaken(data.sessionID);
-        fetchUserData(data.sessionID);
       } else {
         // Handle unexpected response
         throw new Error('Invalid response data');
@@ -67,39 +66,9 @@ function Main() {
       console.error('Login error:', error);
       alert('Please check your email and password input');
     });
-  };
-  const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
+  }; 
+ 
 
-  const fetchUserData = (sessionID) => {
-    fetch(backendUrl, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ sessionID: sessionID })
-    })
-    .then(response => {
-      if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data.status === 'success') {
-          setCurrentName(data.username);
-          setQuizResult(data.quiz_result); 
-          setMajor(data.major); 
-          setGraduationYear(data.graduationYear);
-          console.log(data);
-      } else {
-          throw new Error(data.message || 'Unknown error occurred');
-      }
-    })
-    .catch(error => {
-      console.error('Fetch user data error:', error);
-      alert(`Failed to fetch user data: ${error.message}`);
-    });
-  }
 
   const checkQuizTaken = (sessionID) => {
     fetch(`${apiUrl}/backend/checkquizstatus/checkquizstatus.php`, {

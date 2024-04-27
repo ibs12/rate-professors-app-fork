@@ -450,7 +450,9 @@ const ProfessorCard = () => {
                 {professorInfo.reviews.length === 0 ? (
                     <p>No Reviews</p>
                 ) : (
-                    professorInfo.reviews.map((review, index) => (
+                    [...professorInfo.reviews] // Create a copy of the reviews array to avoid mutating the original array
+                    .reverse() // Reverse the order of the reviews
+                    .map((review, index) => (
                         <Review
                             key={index}
                             author={review.username}
