@@ -101,8 +101,9 @@ const Saved = () => {
                             <div className="saved-professor-infos">
                                 <h2 className="saved-professor-name">{professor.professors}</h2>
                                 <p className="saved-professor-department">{professor.department}</p>
-                                <p className="saved-professor-rating">Rating: {professor.rating || '-/5'}</p>
-                                
+                                <p className="saved-professor-rating">Rating: {
+                                    (professor.total_average === '0.00' || professor.total_average === null) ? "currently none" : parseFloat(professor.total_average) + '/100'
+                                }</p>                                
                             </div>
                         </div>
                         <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />

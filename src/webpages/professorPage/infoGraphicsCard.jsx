@@ -14,8 +14,25 @@ const InfoGraphicsCard = ({
 
     // Function to handle null values
     const renderValue = (value) => {
-        return value !== null ? value : '-/5';
+        return value !== null ? (typeof value === 'number' ? value.toFixed(2) : value) : '-/5';
     };
+
+    const convertNumberToLetterGrade = (gpa) => {
+        if (gpa >= 3.667) return 'A';
+        else if (gpa >= 3.333) return 'A-';
+        else if (gpa >= 3.0) return 'B+';
+        else if (gpa >= 2.667) return 'B';
+        else if (gpa >= 2.333) return 'B-';
+        else if (gpa >= 2.0) return 'C+';
+        else if (gpa >= 1.667) return 'C';
+        else if (gpa >= 1.333) return 'C-';
+        else if (gpa >= 1.0) return 'D+';
+        else if (gpa >= 0.667) return 'D';
+        else if (gpa >= 0.333) return 'D-';
+        else if (gpa < 0.333) return 'F';
+        return '-'; // Handle null or undefined cases
+    };
+    
 
     // Function to handle course selection change
     const handleCourseChange = (event) => {
@@ -32,7 +49,7 @@ const InfoGraphicsCard = ({
                     <p>Average Accessibility: {renderValue(accessibilityAverage)}</p>
                     <p>Average Clarity: {renderValue(clarityAverage)}</p>
                     <p>Average Helpfulness: {renderValue(helpfulnessAverage)}</p>
-                    <p>Overall Average Grade: {averageGrade !== null ? averageGrade : '-'}</p>
+                    <p>Overall Average Grade: {convertNumberToLetterGrade(averageGrade)}</p>
                 </>
             );
         } else {

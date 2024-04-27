@@ -111,8 +111,16 @@ const ProfessorCard = () => {
     const [showInfoCard, setShowInfoCard] = useState(false); // Added for toggling InfoGraphicsCard
 
     const toggleInfoCard = () => {
-        setShowInfoCard(!showInfoCard); // Toggle the visibility of the InfoGraphicsCard
+        if (!isAuthenticated) {
+            const confirmLogin = window.confirm("This feature is available only to registered users. Would you like to log in or sign up?");
+            if (confirmLogin) {
+                navigate('/signuppage'); // Adjust the route as necessary
+            }
+        } else {
+            setShowInfoCard(!showInfoCard);
+        }
     };
+    
 
     const [difficultyAverage, setDifficultyAverage] = useState(null);
     const [feedbackQualityAverage, setFeedbackQualityAverage] = useState(null);
@@ -429,7 +437,7 @@ const ProfessorCard = () => {
             </div>
 
             
-            {showInfoCard && (
+            {showInfoCard && isAuthenticated && (
                 <InfoGraphicsCard 
                     difficultyAverage={difficultyAverage}
                     feedbackQualityAverage={feedbackQualityAverage}
@@ -440,6 +448,7 @@ const ProfessorCard = () => {
                     averageGPAs={averageGPAs}
                 />
             )}
+
             
             <div className='profile-page-sort-button-container'>
                 {/*<button className='profile-page-sort-button' onClick={() => sortReviews("rating")}>Sort by Rating</button>*/}
