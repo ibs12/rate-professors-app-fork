@@ -56,11 +56,22 @@ if (empty($sessionID) || empty($major) || empty($graduationYear)) {
     exit;
 }
 
-// Connect to the database
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Function to establish database connection
+function getDbConnection()
+{
+    global $servername, $username, $password, $dbname;
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    if ($conn->connect_error) {
+        http_response_code(500); // Server error
+        echo json_encode(["message" => "Failed to connect to the database: " . $conn->connect_error]);
+        exit;
+    }
+    return $conn;
 }
+
+// Connect to the database
+$conn = getDbConnection();
 
 // Retrieve userID from sessions table based on sessionID
 $sql = "SELECT userID FROM sessions WHERE sessionID = ?";
