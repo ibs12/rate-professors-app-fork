@@ -16,14 +16,6 @@
     align-items: center;
     padding: 1.5rem;
   }
-  
-  .recommended-professor-img {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 1.5rem;
-  }
 
   
   .recommended-professor-department {
@@ -119,11 +111,15 @@
 }
 
 .recommended-professor-img {
-  width: 80px;
-  height: 80px;
+
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 20px;
+  align-items: center;
+  border-radius: 50%;
+  margin-right: 1.5rem;
 }
 
 .recommended-professor-infos a {
@@ -275,7 +271,7 @@
   }
 
   .recommended-professor-img {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
   }
 }
