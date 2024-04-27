@@ -26,7 +26,7 @@ function getDbConnection() {
 
 function getProfessorsByUserID($userID, $conn) {
     $stmt = $conn->prepare("
-        SELECT p.professorID, p.professors, p.department, p.pfppath
+        SELECT p.professorID, p.professors, p.department, p.pfppath, p.total_average
         FROM saved_professors sp
         JOIN professors p ON sp.professorID = p.professorID
         WHERE sp.userID = ?
