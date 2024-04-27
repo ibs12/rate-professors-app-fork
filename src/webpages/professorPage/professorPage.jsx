@@ -14,6 +14,7 @@ import './infoGraphicsCard.css';
 const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
 const apiUrl = "http://localhost:8000";
 
+
 const importProfessorImage = (imagePath) => {
     try {
         const images = require.context('../../images/professorpfp', false, /\.(png|jpe?g|svg)$/);
@@ -107,6 +108,11 @@ const ProfessorCard = () => {
     const navigate = useNavigate();
     const { name } = useParams();
     const { isAuthenticated } = useAuth(); // Destructure to get isAuthenticated from AuthContext
+    const [showInfoCard, setShowInfoCard] = useState(false); // Added for toggling InfoGraphicsCard
+
+    const toggleInfoCard = () => {
+        setShowInfoCard(!showInfoCard); // Toggle the visibility of the InfoGraphicsCard
+    };
 
     const [difficultyAverage, setDifficultyAverage] = useState(null);
     const [feedbackQualityAverage, setFeedbackQualityAverage] = useState(null);
@@ -115,6 +121,8 @@ const ProfessorCard = () => {
     const [helpfulnessAverage, setHelpfulnessAverage] = useState(null);
     const [averageGrade, setAverageGrade] = useState(null);
     const [averageGPAs, setAverageGPAs] = useState({}); // State for storing average GPAs
+    
+
 
     const [profname, setProfName] = useState('');
     const [profdepartment, setProfDepartment] = useState('');
@@ -165,7 +173,7 @@ const ProfessorCard = () => {
             professorID: ID
         };
 
-        fetch(`${apiUrl}/backend/overallProfessorsRating/overallProfessorsRating.php?professorId=${ID}`, {
+        fetch(`${webServerUrl}/backend/overallProfessorsRating/overallProfessorsRating.php?professorId=${ID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -378,11 +386,12 @@ const ProfessorCard = () => {
         setProfessorInfo({ ...professorInfo, reviews: sortedReviews });
     };
 
-    const Review = ({ author, comment, rating, term, course, grade }) => {
+    const Review = ({ author, comment, rating, term, course, grade, major }) => {
         return (
             <div className="profile-page-review">
                 <div className="profile-page-review-header">
-                    <h4>Anonymous</h4>
+                    <h4 className="author">{author}</h4>
+                    <h4>{major}</h4>
                     <span>{term} - {course}</span>
                     <span>Grade: {grade}</span>
                     <span>Rating: {rating}</span>
@@ -395,6 +404,8 @@ const ProfessorCard = () => {
     return (
         <div className='profile-page-professor-main'>
             {windowWidth < 768 ? <NavBar /> : <NewNavBar />} 
+
+
             <div className="profile-page-professor-card">
                 <img
                     src={isSaved ? savedIconColored : savedIcon}
@@ -411,7 +422,14 @@ const ProfessorCard = () => {
                     <span>{professorInfo.rating}</span>
                 </div>
             </div>
-            <div>
+            <div className="profile-page-toggle-info-card">
+                <span onClick={toggleInfoCard}>
+                    {showInfoCard ? "▲ Click here to view less " : "▼ Click here to view more "}
+                </span>
+            </div>
+
+            
+            {showInfoCard && (
                 <InfoGraphicsCard 
                     difficultyAverage={difficultyAverage}
                     feedbackQualityAverage={feedbackQualityAverage}
@@ -421,7 +439,8 @@ const ProfessorCard = () => {
                     averageGrade={averageGrade}
                     averageGPAs={averageGPAs}
                 />
-            </div>
+            )}
+            
             <div className='profile-page-sort-button-container'>
                 {/*<button className='profile-page-sort-button' onClick={() => sortReviews("rating")}>Sort by Rating</button>*/}
                 {/* <button className='profile-page-sort-button' onClick={() => sortReviews("author")}>Sort by Author</button> */}
@@ -431,10 +450,13 @@ const ProfessorCard = () => {
                 {professorInfo.reviews.length === 0 ? (
                     <p>No Reviews</p>
                 ) : (
-                    professorInfo.reviews.map((review, index) => (
+                    [...professorInfo.reviews] // Create a copy of the reviews array to avoid mutating the original array
+                    .reverse() // Reverse the order of the reviews
+                    .map((review, index) => (
                         <Review
                             key={index}
-                            author={review.author}
+                            author={review.username}
+                            major={review.major}
                             comment={review.comment}
                             rating={review.rating}
                             term={review.term}

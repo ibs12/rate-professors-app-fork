@@ -37,6 +37,9 @@ const ReviewForm = ({ professorImage }) => {
   const [semesters, setSemesters] = useState(['Spring', 'Summer', 'Fall', 'Winter']);
   const [coursePrefixes, setCoursePrefixes] = useState([]);
   const [courseNumbers, setCourseNumbers] = useState([]);
+  const [currentname, setCurrentName] = useState('');
+  const [major, setMajor] = useState('');
+
 
   useEffect(() => {
     const [profNameParam, departmentParam, path, ID] = name.split('+');
@@ -239,9 +242,13 @@ const ReviewForm = ({ professorImage }) => {
       return;
     }
 
+
+  
     const reviewData = {
       userID: localStorage.getItem('userID'), // Assuming you store userID in localStorage after login
       professorID: ID, // Assuming professorID is derived from pfppath
+      author: currentname,
+      authormajor: major,
       difficulty: formData.difficulty,
       helpfulness: formData.helpfulness,
       clarity: formData.clarity,
@@ -256,7 +263,7 @@ const ReviewForm = ({ professorImage }) => {
     const apiUrl = 'http://localhost:8000';
     console.log(formData);
 
-    fetch(`${apiUrl}/backend/createReview/createReview.php`, {
+    fetch(`${webServerUrl}/backend/createReview/createReview.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

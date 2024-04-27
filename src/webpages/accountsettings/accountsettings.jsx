@@ -6,6 +6,7 @@ import defaultProfilePic from "../../images/eye.png";
 import { useNavigate } from 'react-router-dom';
 import majors from './majors';
 
+
 const AccountSettingsPage = () => {
     const [profilePic, setProfilePic] = useState(null);
     const [major, setMajor] = useState('');
@@ -18,17 +19,25 @@ const AccountSettingsPage = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [quizResult, setQuizResult] = useState('No quiz result yet'); // Initialize quizResult state
-    const [isPasswordSection, setIsPasswordSection] = useState(true); 
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [quizResult, setQuizResult] = useState('No quiz result yet');
     const [updateType, setUpdateType] = useState('password');
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+    const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
+    const [majorUpdateMessage, setMajorUpdateMessage] = useState('');
+    const [graduationUpdateMessage, setGraduationUpdateMessage] = useState('');
+    const [usernameUpdateMessage, setUsernameUpdateMessage] = useState('');
+    const [passwordUpdateMessage, setPasswordUpdateMessage] = useState('');
     const navigate = useNavigate();
-
+    const [semester, setSemester] = useState('');
+    const graduationSemesterYear = `${semester} ${newgraduationYear}`;
+    const webServerUrl = 'https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac'
+   
     useEffect(() => {
         const sessionId = localStorage.getItem('sessionID');
         const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
 
-        fetch(backendUrl, {
+        fetch(`${webServerUrl}/backend/returnuserinfo/returnuserinfo.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -44,7 +53,9 @@ const AccountSettingsPage = () => {
         .then(data => {
             if (data.status === 'success') {
                 setCurrentName(data.username);
-                setQuizResult(data.quiz_result); // Update quizResult state
+                setQuizResult(data.quiz_result); 
+                setMajor(data.major); 
+                setGraduationYear(data.graduationYear);
             } else {
                 throw new Error(data.message || 'Unknown error occurred');
             }
@@ -78,25 +89,23 @@ const AccountSettingsPage = () => {
     const handleResetPassword = () => {
         const sessionId = localStorage.getItem('sessionID');
         const oldPassword = currentPassword;
-        const newPasswordValue = newPassword; // Rename variable to avoid shadowing
-    
+        const newPasswordValue = newPassword;
         const confirmPassword = confirmNewPassword;
     
         if (newPasswordValue !== confirmPassword) {
-            alert("New password and confirm password do not match.");
+            setPasswordErrorMessage("New password and confirm password do not match.");
             return;
         }
     
         const data = {
             sessionID: sessionId,
             oldpassword: oldPassword,
-            newpassword: newPasswordValue // Use the correct variable here
+            newpassword: newPasswordValue
         };
-        console.log("Data sent to backend:", data); // Print out the data
     
         const backendUrl = 'http://localhost:8000/backend/changePassword/changePassword.php';
     
-        fetch(backendUrl, {
+        fetch(`${webServerUrl}/backend/changePassword/changePassword.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -111,14 +120,14 @@ const AccountSettingsPage = () => {
         })
         .then(data => {
             if (data.status === 'success') {
-                alert('Password changed successfully');
+                setPasswordUpdateMessage('Password changed successfully');
             } else {
                 throw new Error(data.message || 'Unknown error occurred');
             }
         })
         .catch(error => {
             console.error('Change password error:', error);
-            alert(`Failed to change password: ${error.message}`);
+            setPasswordErrorMessage(`Failed to change password: ${error.message}`);
         });
     };
     
@@ -141,7 +150,7 @@ const AccountSettingsPage = () => {
         };
 
         const backendUrl = 'http://localhost:8000/backend/removeuser/remove.php';
-        fetch(backendUrl, {
+        fetch(`${webServerUrl}/backend/removeuser/remove.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -171,79 +180,152 @@ const AccountSettingsPage = () => {
     };
 
     const handleChangeUsername = () => {
-    const sessionId = localStorage.getItem('sessionID');
-    const newUsername = name;
+        const sessionId = localStorage.getItem('sessionID');
+        const newUsername = name;
 
-    const data = {
-        sessionID: sessionId,
-        username: newUsername
+        const data = {
+            sessionID: sessionId,
+            username: newUsername
+        };
+
+        const backendUrl = 'http://localhost:8000/backend/changeUsername/changeUsername.php';
+        fetch(`${webServerUrl}/backend/changeUsername/changeUsername.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update username');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                setUsernameUpdateMessage('Username updated successfully');
+                fetchUserData(sessionId);
+            } else {
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Update username error:', error);
+            setUsernameErrorMessage(`Failed to update username: ${error.message}`);
+        });
     };
 
-    const backendUrl = 'http://localhost:8000/backend/changeUsername/changeUsername.php';
-    fetch(backendUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to update username');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === 'success') {
-            alert('Username updated successfully');
-            // Fetch updated user data after username change
-            fetchUserData(sessionId);
-        } else {
-            throw new Error(data.message || 'Unknown error occurred');
-        }
-    })
-    .catch(error => {
-        console.error('Update username error:', error);
-        alert(`Failed to update username: ${error.message}`);
-    });
-};
+    const fetchUserData = (sessionId) => {
+        const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
 
-const fetchUserData = (sessionId) => {
-    const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
+        fetch(`${webServerUrl}/backend/returnuserinfo/returnuserinfo.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ sessionID: sessionId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                setCurrentName(data.username);
+                setQuizResult(data.quiz_result);
+            } else {
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch user data error:', error);
+            alert(`Failed to fetch user data: ${error.message}`);
+        });
+    };
 
-    fetch(backendUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ sessionID: sessionId })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch user data');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === 'success') {
-            setCurrentName(data.username);
-            setQuizResult(data.quiz_result);
+    const [graduationYearFormatError, setGraduationYearFormatError] = useState('');
+    const [semesterErrorMessage, setSemesterErrorMessage] = useState('');
+
+
+    const handleUpdateMajorAndGraduation = () => {
+        const sessionId = localStorage.getItem('sessionID');
+
+            // Check if newgraduationYear is a 4-digit number
+        if (!/^\d{4}$/.test(newgraduationYear)) {
+            setGraduationYearFormatError('Please enter a valid 4-digit graduation year.');
+            return; // Stop the function if the year format is incorrect
         } else {
-            throw new Error(data.message || 'Unknown error occurred');
+            setGraduationYearFormatError(''); // Clear any existing error messages if the format is now correct
         }
-    })
-    .catch(error => {
-        console.error('Fetch user data error:', error);
-        alert(`Failed to fetch user data: ${error.message}`);
-    });
-};
-const handleSaveChanges = () => {
-    if (updateType === 'password') {
-        handleResetPassword();
-    } else if (updateType === 'username') {
-        handleChangeUsername();
-    }
-};
+
+            // Validation for semester
+            if (!semester) {
+                setSemesterErrorMessage('Please select a semester.');
+            } else {
+                setSemesterErrorMessage('');
+            }
+
+            // Stop function execution if there are any validation errors
+            if (!semester || !/^\d{4}$/.test(newgraduationYear)) {
+                return;
+            }
+
+        const data = {
+            sessionID: sessionId,
+            major: newmajor,
+            graduationYear: graduationSemesterYear
+        };
+    
+        const backendUrl = 'http://localhost:8000/backend/addmajorandgraduationdata/addmajorandgraduationdata.php';
+
+        fetch(`${webServerUrl}/backend/addmajorandgraduationdata/addmajorandgraduationdata.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update major and graduation year');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                setMajor(newmajor); // Update major state
+                setGraduationYear(graduationSemesterYear); // Update graduation year state
+                setMajorUpdateMessage('Major updated successfully');
+                setGraduationUpdateMessage('Graduation year updated successfully');
+            } else {
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Update major and graduation year error:', error);
+            //const errorMessage = error.message || 'Unknown error occurred';
+            const majorErrorMessage = newmajor ? '' : 'Major cannot be empty';
+            const graduationYearErrorMessage = newgraduationYear ? '' : 'Graduation Year cannot be empty';
+            setMajorUpdateMessage(majorErrorMessage);
+            setGraduationUpdateMessage(graduationYearErrorMessage);
+        });
+        
+    };
+    
+
+    const handleSaveChanges = () => {
+        if (updateType === 'password') {
+            handleResetPassword();
+        } else if (updateType === 'username') {
+            handleChangeUsername();
+        } else if (updateType === 'major') {
+            handleUpdateMajorAndGraduation();
+        }
+    };
+    
 
 
     const SimpleModal = ({ isOpen, onClose, onConfirm }) => {
@@ -263,8 +345,10 @@ const handleSaveChanges = () => {
     };
 
     const handleRetakeQuiz = () =>{
-        navigate('/quizPage');  // Navigate to the quiz page
+        navigate('/quizPage');
     }
+
+
 
     return (
         <div>
@@ -273,34 +357,14 @@ const handleSaveChanges = () => {
             <div className="left-side">
                 <div className="profile-pic-container">
                     <label htmlFor="profile-upload" style={{ cursor: 'pointer' }}>
-                        <img src={profilePic || defaultProfilePic} alt="Profile" className="profile-image" />
-                        <div className="upload-text">Upload a picture</div>
-                        <input
-                            id="profile-upload"
-                            type="file"
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                            onChange={handleProfilePicChange}
-                        />
+                        <img src={defaultProfilePic} alt="Profile" className="profile-image" />
                     </label>
 
                 </div>
                 
                 <div className="field-container">
-                    <input
-                        type="text"
-                        placeholder="Major"
-                        value={major}
-                        onChange={(e) => setMajor(e.target.value)}
-                        className="text-field"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Graduation Year"
-                        value={graduationYear}
-                        onChange={(e) => setGraduationYear(e.target.value)}
-                        className="text-field"
-                    />
+                <div className="text-display">{major}</div>
+                <div className="text-display">{graduationYear}</div>
                     <label className="text-field">Quiz Result: {quizResult}</label>
                 </div>
                 <div >
@@ -323,13 +387,7 @@ const handleSaveChanges = () => {
             <div className="right-side">
                 <div className='field-group'>
                     <label className="field-label">Current Username:</label>
-                    <input
-                        type="text"
-                        placeholder="Name"
-                        value={currentname}
-                        onChange={(e) => setCurrentName(e.target.value)}
-                        className="text-field"
-                    />
+                    <div className="text-display">{currentname}</div>
                 </div>
                 <hr className="divider" />
                 <div className="section-toggle-buttons">
@@ -375,6 +433,8 @@ const handleSaveChanges = () => {
                                     className="text-field"
                                 />
                             </div>
+                            <div className='error-message'>{passwordErrorMessage}</div>
+                            <div className='success-message'>{passwordUpdateMessage}</div>
                         </div>
                     )}
                     {updateType === 'username' && (
@@ -389,6 +449,8 @@ const handleSaveChanges = () => {
                                     className="text-field"
                                 />
                             </div>
+                            <div className='error-message'>{usernameErrorMessage}</div>
+                            <div className='success-message'>{usernameUpdateMessage}</div>
                         </div>
                     )}
                     {updateType === 'major' && (
@@ -407,15 +469,36 @@ const handleSaveChanges = () => {
                                 </select>
                             </div>
                             <div className='field-group'>
-                                <label className="field-label">New Graduation Year:</label>
+                                <label className="field-label">Semester:</label>
+                                <select
+                                    value={semester}
+                                    onChange={(e) => setSemester(e.target.value)}
+                                    className="dropdown-menu"
+                                >
+                                    <option value="">Select a Semester</option>
+                                    <option value="Spring">Spring</option>
+                                    <option value="Summer">Summer</option>
+                                    <option value="Fall">Fall</option>
+                                    <option value="Winter">Winter</option>
+                                </select>
+                                {semesterErrorMessage && <div className='error-message'>{semesterErrorMessage}</div>}
+
+                            </div>
+                            <div className='field-group'>
+                                <label className="field-label">Graduation Year:</label>
                                 <input
                                     type="text"
-                                    placeholder="Graduation Year"
+                                    placeholder="YYYY"
                                     value={newgraduationYear}
                                     onChange={(e) => setNewGraduationYear(e.target.value)}
                                     className="text-field"
+                                    pattern="\d*"
                                 />
+                                {graduationYearFormatError && <div className='error-message'>{graduationYearFormatError}</div>}
+
                             </div>
+                            <div className='error-message'>{majorUpdateMessage}</div>
+                            <div className='error-message'>{graduationUpdateMessage}</div>
                         </div>
                     )}
                     <div className="button-container">

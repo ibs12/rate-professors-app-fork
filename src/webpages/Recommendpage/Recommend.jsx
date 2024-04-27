@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './Recommend.css';
 import NavBar from '../navBar/NavBar';
 import NewNavBar from '../navBar/newNavBar';
-
+const webServerUrl =  "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac";
 
 const apiUrl = "http://localhost:8000"; // Assuming your backend runs on localhost port 8000
 
@@ -54,7 +54,7 @@ const RecommendedProfessorsPage = () => {
                 const userID = localStorage.getItem('userID');
                 console.log('User ID sent to backend:', userID);
 
-                const response = await fetch(`${apiUrl}/backend/recommendProfessors/recommendByType.php`, {
+                const response = await fetch(`${webServerUrl}/backend/recommendProfessors/recommendByType.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

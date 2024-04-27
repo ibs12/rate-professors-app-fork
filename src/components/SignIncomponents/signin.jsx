@@ -9,8 +9,13 @@ import { useAuth } from '../../AuthContext'; // Import useAuth hook
 function Main() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [currentname, setCurrentName] = useState('');
+  const [major, setMajor] = useState('');
+  const [graduationYear, setGraduationYear] = useState('');
+  const [quizResult, setQuizResult] = useState('No quiz result yet');
 
   const { checkAuth, setIsAuthenticated } = useAuth();
+  
   const navigate = useNavigate();
 
   const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac";
@@ -61,10 +66,12 @@ function Main() {
       console.error('Login error:', error);
       alert('Please check your email and password input');
     });
-  };
+  }; 
+ 
+
 
   const checkQuizTaken = (sessionID) => {
-    fetch(`${apiUrl}/backend/checkquizstatus/checkquizstatus.php`, {
+    fetch(`${webServerUrl}/backend/checkquizstatus/checkquizstatus.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

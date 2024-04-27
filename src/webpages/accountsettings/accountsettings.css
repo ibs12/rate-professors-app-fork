@@ -244,6 +244,18 @@
     background-color: #4e4e4e; /* Darker shade for hover effect */
 }
 
+.text-display {
+    text-align: left;
+    padding: 10px 12px;
+    background-color: #f3f3f3; /* Light grey background to mimic disabled input */
+    border: 1px solid #ccc; /* Border to look similar to input fields */
+    border-radius: 4px; /* Rounded corners like typical inputs */
+    color: rgb(0, 0, 0); /* Text color */
+    font-size: 16px; /* Font size similar to inputs */
+    width: calc(100% - 24px); /* Full width minus padding to match input fields */
+    box-sizing: border-box; /* To include padding and border in width */
+    display: block; /* Ensures the div behaves like an input field in layout */
+}
 
 /* AccountSettingsPage.css */
 
