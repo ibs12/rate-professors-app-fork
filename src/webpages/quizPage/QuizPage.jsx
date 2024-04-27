@@ -135,7 +135,7 @@ const Quiz = () => {
     <div className='quiz-main'>
       <div className="quiz-container">
         <div className="quiz-header">Let's find your type of professor!</div>
-        <p>Embarking on your educational path is not just about choosing the right courses; it's also about connecting with the right mentors...</p>
+        <p>Embarking on your educational path is not just about choosing the right courses; it's also about connecting with the right mentors. Understanding your preferences and personality can significantly impact your learning experience and academic success. This quiz is designed to help you navigate the diverse teaching styles and personalities you'll encounter in your academic journey.</p>
 
         {questions.map((q, index) => (
           <div key={index} className="question-block">
