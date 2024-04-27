@@ -263,7 +263,7 @@ const ReviewForm = ({ professorImage }) => {
     const apiUrl = 'http://localhost:8000';
     console.log(formData);
 
-    fetch(`${apiUrl}/backend/createReview/createReview.php`, {
+    fetch(`${webServerUrl}/backend/createReview/createReview.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
