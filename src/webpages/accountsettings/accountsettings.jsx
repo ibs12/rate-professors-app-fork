@@ -356,34 +356,14 @@ const AccountSettingsPage = () => {
             <div className="left-side">
                 <div className="profile-pic-container">
                     <label htmlFor="profile-upload" style={{ cursor: 'pointer' }}>
-                        <img src={profilePic || defaultProfilePic} alt="Profile" className="profile-image" />
-                        <div className="upload-text">Upload a picture</div>
-                        <input
-                            id="profile-upload"
-                            type="file"
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                            onChange={handleProfilePicChange}
-                        />
+                        <img src={defaultProfilePic} alt="Profile" className="profile-image" />
                     </label>
 
                 </div>
                 
                 <div className="field-container">
-                    <input
-                        type="text"
-                        placeholder="Major"
-                        value={major}
-                        onChange={(e) => setMajor(e.target.value)}
-                        className="text-field"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Graduation Year"
-                        value={graduationYear}
-                        onChange={(e) => setGraduationYear(e.target.value)}
-                        className="text-field"
-                    />
+                <div className="text-display">{major}</div>
+                <div className="text-display">{graduationYear}</div>
                     <label className="text-field">Quiz Result: {quizResult}</label>
                 </div>
                 <div >
