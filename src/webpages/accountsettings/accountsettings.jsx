@@ -31,13 +31,13 @@ const AccountSettingsPage = () => {
     const navigate = useNavigate();
     const [semester, setSemester] = useState('');
     const graduationSemesterYear = `${semester} ${newgraduationYear}`;
-
-
+    const webServerUrl = 'https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac'
+   
     useEffect(() => {
         const sessionId = localStorage.getItem('sessionID');
         const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
 
-        fetch(backendUrl, {
+        fetch(`${webServerUrl}/backend/returnuserinfo/returnuserinfo.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -105,7 +105,7 @@ const AccountSettingsPage = () => {
     
         const backendUrl = 'http://localhost:8000/backend/changePassword/changePassword.php';
     
-        fetch(backendUrl, {
+        fetch(`${webServerUrl}/backend/changePassword/changePassword.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -150,7 +150,7 @@ const AccountSettingsPage = () => {
         };
 
         const backendUrl = 'http://localhost:8000/backend/removeuser/remove.php';
-        fetch(backendUrl, {
+        fetch(`${webServerUrl}/backend/removeuser/remove.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -189,7 +189,7 @@ const AccountSettingsPage = () => {
         };
 
         const backendUrl = 'http://localhost:8000/backend/changeUsername/changeUsername.php';
-        fetch(backendUrl, {
+        fetch(`${webServerUrl}/backend/changeUsername/changeUsername.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -219,7 +219,7 @@ const AccountSettingsPage = () => {
     const fetchUserData = (sessionId) => {
         const backendUrl = 'http://localhost:8000/backend/returnuserinfo/returnuserinfo.php';
 
-        fetch(backendUrl, {
+        fetch(`${webServerUrl}/backend/returnuserinfo/returnuserinfo.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -280,7 +280,8 @@ const AccountSettingsPage = () => {
         };
     
         const backendUrl = 'http://localhost:8000/backend/addmajorandgraduationdata/addmajorandgraduationdata.php';
-        fetch(backendUrl, {
+
+        fetch(`${webServerUrl}/backend/addmajorandgraduationdata/addmajorandgraduationdata.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -305,7 +306,7 @@ const AccountSettingsPage = () => {
         })
         .catch(error => {
             console.error('Update major and graduation year error:', error);
-            const errorMessage = error.message || 'Unknown error occurred';
+            //const errorMessage = error.message || 'Unknown error occurred';
             const majorErrorMessage = newmajor ? '' : 'Major cannot be empty';
             const graduationYearErrorMessage = newgraduationYear ? '' : 'Graduation Year cannot be empty';
             setMajorUpdateMessage(majorErrorMessage);
