@@ -173,7 +173,7 @@ const ProfessorCard = () => {
             professorID: ID
         };
 
-        fetch(`${apiUrl}/backend/overallProfessorsRating/overallProfessorsRating.php?professorId=${ID}`, {
+        fetch(`${webServerUrl}/backend/overallProfessorsRating/overallProfessorsRating.php?professorId=${ID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
