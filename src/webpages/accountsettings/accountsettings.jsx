@@ -391,15 +391,21 @@ const AccountSettingsPage = () => {
                 </div>
                 <hr className="divider" />
                 <div className="section-toggle-buttons">
-                        <button className={updateType === 'password' ? 'active' : ''} onClick={() => toggleSection('password')}>
-                            Change Password
-                        </button>
-                        <button className={updateType === 'username' ? 'active' : ''} onClick={() => toggleSection('username')}>
-                            Update Username
-                        </button>
-                        <button className={updateType === 'major' ? 'active' : ''} onClick={() => toggleSection('major')}>
-                            Update Major & Graduation Date
-                        </button>
+                    <button 
+                        className={`some-button ${updateType === 'password' ? 'active' : ''}`}
+                        onClick={() => toggleSection('password')}>
+                        Change Password
+                    </button>
+                    <button 
+                        className={`some-button ${updateType === 'username' ? 'active' : ''}`}
+                        onClick={() => toggleSection('username')}>
+                        Update Username
+                    </button>
+                    <button 
+                        className={`some-button ${updateType === 'major' ? 'active' : ''}`}
+                        onClick={() => toggleSection('major')}>
+                        Update Major & Graduation Date
+                    </button>
                     </div>
                     {updateType === 'password' && (
                         <div className="password-change-section">

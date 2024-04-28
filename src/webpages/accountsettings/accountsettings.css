@@ -257,17 +257,56 @@
     display: block; /* Ensures the div behaves like an input field in layout */
 }
 
+.some-button{
+    margin:10px;
+}
+
 /* AccountSettingsPage.css */
 
 /* Existing styles for larger screens... */
 
-/* Styles specific for screens up to 425px wide */
-@media (max-width: 425px) {
-
-
-    .left-side, .right-side {
-        height:150vh;
+@media (max-width: 500px) {
+    .main-container {
+        flex-direction: column; /* Change layout to column */
+        align-items: center; /* Center align the items */
     }
+
+    .left-side,
+    .right-side {
+        width: 100%; /* Full width for each section */
+        margin-top: 0; /* Remove top margin for right side */
+        flex: none; /* Remove flex sizing */
+    }
+
+    .profile-pic-container {
+        margin-left: auto; /* Center the profile picture container horizontally */
+        margin-right: auto;
+    }
+
+    .delete-account-button,
+    .retake-quiz-button {
+        margin-top: 20px; /* Reduce top margin for better spacing */
+    }
+
+    .field-container{
+        padding-left: 30px;
+        
+
+    }
+
+    .text-field {
+        margin-left:0;
+    }
+
+    .delete-account-container{
+        margin-top:0px;
+    }
+
+    .some-button{
+        margin:5px;
+    }
+
+
 
 
 }
