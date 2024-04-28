@@ -54,6 +54,7 @@ const convertLetterGradeToNumber = (grade) => {
     }
 };
 
+//this is for infographics card
 const calculateAverageGPA = (data) => {
     const courseData = {};
 
@@ -169,6 +170,9 @@ const ProfessorCard = () => {
             navigate('/signuppage');
         }
     };
+    
+    const [overallRating, setOverallRating] = useState(null);  // State to hold the overall rating independently
+
 
     const fetchProfessorInfo = (Data) => {
         const [name, department, path, ID] = Data.split('+');
@@ -181,24 +185,21 @@ const ProfessorCard = () => {
             professorID: ID
         };
 
+        // Fetch for overall rating
         fetch(`${webServerUrl}/backend/overallProfessorsRating/overallProfessorsRating.php?professorId=${ID}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         })
         .then(response => response.json())
         .then(data => {
-            // Assuming data contains the total average in data.updatedAverages.total_average
-            const totalAverage = data.updatedAverages.total_average > 0 ? parseFloat(data.updatedAverages.total_average) : '-';
-            setProfessorInfo(prevInfo => ({
-                ...prevInfo,
-                rating: totalAverage // Update rating with the actual total average
-            }));
+            setOverallRating(parseFloat(data.updatedAverages.total_average));  // Set the overall rating
+            setProfessorInfo(prevInfo => ({ ...prevInfo, rating: parseFloat(data.updatedAverages.total_average) }));
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Error fetching overall rating:', error);
+            setOverallRating('-');  // Handle errors or invalid data by setting a fallback
         });
+
     
         fetch(`${webServerUrl}/backend/searchFilter/searchprofessorreviews.php`, {
             method: 'POST',
@@ -234,28 +235,36 @@ const ProfessorCard = () => {
                             rating: averageRating
                         };
                     });
-    
+                    setProfessorInfo(prev => ({
+                        ...prev,
+                        name: name,
+                        department: department,
+                        profilePicture: '',
+                        reviews: updatedReviews
+                    }));
+                    /*
                     setProfessorInfo({
                         name: name,
                         department: department,
                         profilePicture: '',
-                        rating: '-', // You may want to calculate the overall rating based on all reviews
+                        //rating: '-',
+                        rating: data.updatedAverages.total_average, // You may want to calculate the overall rating based on all reviews
                         reviews: updatedReviews
                     });
 
                     // Calculate and set averages
                     calculateAverages(updatedReviews);
                     const averageGPAs = calculateAverageGPA(updatedReviews);
-                    setAverageGPAs(averageGPAs);
+                    setAverageGPAs(averageGPAs);*/
                 } else {
                     // If no reviews available, set only the basic information
-                    setProfessorInfo({
+                    setProfessorInfo(prevInfo => ({
                         name: name,
                         department: department,
                         profilePicture: '',
-                        rating: '-', // You may want to calculate the overall rating based on all reviews
+                        rating: '-', // Preserve the rating if already set and valid
                         reviews: []
-                    });
+                    }));
                 }
             })
             .catch(error => {
@@ -265,6 +274,7 @@ const ProfessorCard = () => {
 
     };
 
+    //this is for infographics card
     const calculateAverages = (reviews) => {
         let difficultySum = 0;
         let feedbackQualitySum = 0;
@@ -289,6 +299,7 @@ const ProfessorCard = () => {
         setAverageGrade(calculateAverageGrade(reviews));
     };
 
+    //this is for infographics card
     const calculateAverageGrade = (reviews) => {
         let totalGrade = 0;
         let totalCount = reviews.length;
@@ -427,7 +438,7 @@ const ProfessorCard = () => {
                     <p>{professorInfo.department}</p>
                 </div>
                 <div className="profile-page-professor-rating">
-                    <span>{professorInfo.rating}</span>
+                    <span>{overallRating !== null ? overallRating : '-'}</span>
                 </div>
             </div>
             <div className="profile-page-toggle-info-card">

@@ -6,28 +6,29 @@ function Footer() {
   return (
     <footer className="footer" style={{ position: 'relative' }}>
       <Link to="/signuppage/" style={{ textDecoration: 'none' }}>
-        <button style={{
-          position: 'relative',
-          width: 'calc(24.8vw + 24.8vh)',
-          height: 'calc(4vw + 4vh)',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: '#005BBB',
-          borderRadius: '15.5633px',
-          border: 'none',
-          color: '#FFFFFF',
-          fontFamily: 'Crimson Text',
-          fontStyle: 'normal',
-          fontWeight: '600',
-          fontSize: 'calc(2.5vw + 2.5vh)', /* Adjust font size */
-          lineHeight: '63px', /* Adjust line height */
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center', /* Center horizontally */
-          textAlign: 'center'
-        }}>
-          Sign up now!
-        </button>
+      <button style={{
+        position: 'relative',
+        width: 'calc(20.4vw + 20.4vh)',  // Reduced width from 24.8 to 12.4
+        height: 'calc(2vw + 2vh)',        // Reduced height from 4 to 2
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        background: '#005BBB',
+        borderRadius: '15.5633px',
+        border: 'none',
+        color: '#FFFFFF',
+        fontFamily: 'Crimson Text',
+        fontStyle: 'normal',
+        fontWeight: '600',
+        fontSize: 'calc(1.25vw + 1.25vh)', // Reduced font size from 2.5 to 1.25
+        lineHeight: '31.5px',              // Adjusted line height to half of previous
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',          // Center horizontally
+        textAlign: 'center'
+    }}>
+        Sign up now!
+    </button>
+
       </Link>
       <p style={{
         position: 'absolute',
