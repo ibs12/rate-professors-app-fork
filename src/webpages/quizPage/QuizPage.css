@@ -82,3 +82,17 @@
   padding: 10px 20px;
   margin-top: 20px;
 }
+
+/* Responsive adjustments for small screens */
+@media (max-width: 600px) {
+  .quiz-container {
+    width: 90%; /* Full screen width */
+    box-shadow: none; /* Optional: remove box shadow for cleaner look */
+    padding: 10px; /* Reduce padding to save space */
+  }
+
+  .question-block{
+    padding: 0px;
+    width:90%;
+  }
+}
