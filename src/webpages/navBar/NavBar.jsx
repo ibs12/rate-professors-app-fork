@@ -7,28 +7,26 @@ import { useAuth } from '../../AuthContext';
 
 function NavBar() {
     const [isMenuVisible, setIsMenuVisible] = useState(false);
-    const { setIsAuthenticated } = useAuth();
+    const { isAuthenticated, setIsAuthenticated } = useAuth();  // Simplified use of AuthContext
+
     const navigate = useNavigate();
 
     const toggleMenu = () => {
         setIsMenuVisible(prevState => !prevState);  // Correctly toggle the state
     };
 
-
     const handleLogout = async () => {
         console.log("Initiating logout process");
-
         const email = localStorage.getItem('email');
         const sessionID = localStorage.getItem('sessionID');
         const userID = localStorage.getItem('userID');
         console.log("Retrieved session data:", { email, sessionID, userID });
 
-        const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac"
-        const apiUrl = "http://localhost:8000";
+        const webServerUrl = "https://www-student.cse.buffalo.edu/CSE442-542/2024-Spring/cse-442ac/backend/logout/logout.php";
         if (email && sessionID && userID) {
             console.log("Session data exists. Proceeding with logout.");
             try {
-                const response = await fetch(`${webServerUrl}/backend/logout/logout.php`, {
+                const response = await fetch(webServerUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -52,16 +50,34 @@ function NavBar() {
             } catch (error) {
                 console.error('Logout error caught:', error);
             }
-        } else {
+        } else{
             console.log("No active session found. Redirecting to login page.");
-            navigate('/signinpage');
+            const confirmRedirect = window.confirm("Sorry! This feature is only for sign-up users. Would you like to sign up?");
+            if (confirmRedirect) {
+                navigate('/signuppage');
+            } else {
+            }
+        }
+    };
+
+
+    const handleNavigationAttempt = (path) => {
+        if (isAuthenticated) {
+            navigate(path);
+        } else {
+            const confirmSignUp = window.confirm("Sorry! This feature is only for registered users. Would you like to sign up?");
+            if (confirmSignUp) {
+                navigate('/signuppage');
+            }
         }
     };
 
     return (
         <nav className="navbar">
             <div>
-                <img src={Logo} alt="Logo" className="navbar-logo" />
+                <Link to="/homepage">
+                    <img src={Logo} alt="Logo" className="newnavbar-logo" />
+                </Link>            
             </div>
             <div onClick={toggleMenu} className="navbar-menu-icon-container">
                 <img src={MenuIcon} alt="Menu" className="navbar-menu-icon" />
@@ -73,21 +89,21 @@ function NavBar() {
                             Homepage
                         </Link>
                     </li>
-                    <li>
-                        <Link to="/saved" className="navbar-menu-item">
-                            Saved
-                        </Link>
+                    <li onClick={() => handleNavigationAttempt('/saved')} style={{ cursor: 'pointer' }} className="navbar-menu-item">
+                        Saved
                     </li>
-                    <li>
-                        <Link to="/accountsettings" className="navbar-menu-item">
-                            Account Settings
-                        </Link>
+                    <li onClick={() => handleNavigationAttempt('/accountsettings')} style={{ cursor: 'pointer' }} className="navbar-menu-item">
+                        Account Settings
                     </li>
-                    <li className="navbar-menu-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                    <li onClick={() => handleNavigationAttempt('/recommendpage')} style={{ cursor: 'pointer' }} className="navbar-menu-item">
+                        Recommendation
+                    </li>
+                    <li onClick={handleLogout} style={{ cursor: 'pointer' }} className="navbar-menu-item">
                         Logout
                     </li>
                 </ul>
             </div>
+
         </nav>
     );
 }

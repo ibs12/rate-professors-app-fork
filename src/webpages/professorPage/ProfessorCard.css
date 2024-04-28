@@ -3,6 +3,8 @@
     padding-top: 10vh;
     margin-left: 20vh;
     margin-right: 5vh;
+    /*align-items: flex-start; /* Aligns children to the left */
+
 }
 
 .profile-page-professor-content {
@@ -59,6 +61,7 @@
 .profile-page-professor-info p {
     color: #666;
     font-size: 25px;
+    padding-right: 10px;
 }
 
 .profile-page-professor-rating span {
@@ -78,7 +81,10 @@
     background-color: #ffffff;
     margin-bottom: 20px;
     width: 80%;
+    
 }
+
+
 
 .profile-page-review h4 {
     margin: 0;
@@ -141,6 +147,26 @@
 
 .profile-page-write-review-button:hover {
     background-color: #0056b3;
+}
+
+.profile-page-toggle-info-card {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.profile-page-toggle-info-card span {
+    font-size: 16px;
+    color: #007bff; /* Blue to mimic a hyperlink */
+   /*  text-decoration: underline; Underline to emphasize interactivity */
+    cursor: pointer; /* Cursor pointer to indicate it's clickable */
+    font-family: "Crimison text";
+}
+
+.profile-page-toggle-info-card span:hover {
+    text-decoration: none; /* Optional: Remove underline on hover for a dynamic effect */
+    color:#393939;
+    text-decoration: underline;/*  Underline to emphasize interactivity */
+
 }
 
 /* Styles for tablets and smaller devices (up to 768px) */

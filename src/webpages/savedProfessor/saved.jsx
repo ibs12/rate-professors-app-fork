@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from '../navBar/NavBar';
+import NewNavBar from '../navBar/newNavBar'; // Import the NewNavBar as well
+
 import './saved.css';
 import Default from '../../images/defaultPic.png';
 import TrashPic from '../../images/trash_bin.png';
@@ -20,6 +22,18 @@ const importProfessorImage = (imagePath) => {
 
 const Saved = () => {
     const [professors, setProfessors] = useState([]);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth); // State to track window width
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
 
     useEffect(() => {
         const userID = localStorage.getItem('userID'); // Get sessionID from local storage
@@ -75,8 +89,8 @@ const Saved = () => {
     };    
 
     return (
-<div>
-    <NavBar />
+    <div>
+        {windowWidth < 768 ? <NavBar /> : <NewNavBar />} 
         <div className="page-content">
             <h1 className="page-title">Saved Professors</h1>
             <div className="saved-professors-container">
@@ -87,7 +101,9 @@ const Saved = () => {
                             <div className="saved-professor-infos">
                                 <h2 className="saved-professor-name">{professor.professors}</h2>
                                 <p className="saved-professor-department">{professor.department}</p>
-                                <p className="saved-professor-rating">Rating: {professor.rating || '-/5'}</p>
+                                <p className="saved-professor-rating">Rating: {
+                                    (professor.total_average === '0.00' || professor.total_average === null) ? "currently none" : parseFloat(professor.total_average) + '/100'
+                                }</p>                                
                             </div>
                         </div>
                         <img src={TrashPic} alt="Delete" className="delete-icon" onClick={() => removeProfessor(professor.professorID)} />

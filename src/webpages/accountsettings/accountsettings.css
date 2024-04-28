@@ -68,6 +68,23 @@
     background-color: #cc0000; /* Darker shade for hover effect */
 }
 
+.retake-quiz-button {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: none;
+    background-color: #005bbb; /* A red color to indicate a destructive action */
+    color: white;
+    font-size: 14px;
+    font-family: "Crimison text";
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 30vh;
+}
+
+.retake-quiz-button:hover {
+    background-color: #004895; /* Darker shade for hover effect */
+}
+
 .right-side {
     flex: 10; /* Adjust based on your layout needs */
     margin-top: 10vh ;
@@ -227,18 +244,69 @@
     background-color: #4e4e4e; /* Darker shade for hover effect */
 }
 
+.text-display {
+    text-align: left;
+    padding: 10px 12px;
+    background-color: #f3f3f3; /* Light grey background to mimic disabled input */
+    border: 1px solid #ccc; /* Border to look similar to input fields */
+    border-radius: 4px; /* Rounded corners like typical inputs */
+    color: rgb(0, 0, 0); /* Text color */
+    font-size: 16px; /* Font size similar to inputs */
+    width: calc(100% - 24px); /* Full width minus padding to match input fields */
+    box-sizing: border-box; /* To include padding and border in width */
+    display: block; /* Ensures the div behaves like an input field in layout */
+}
+
+.some-button{
+    margin:10px;
+}
 
 /* AccountSettingsPage.css */
 
 /* Existing styles for larger screens... */
 
-/* Styles specific for screens up to 425px wide */
-@media (max-width: 425px) {
-
-
-    .left-side, .right-side {
-        height:150vh;
+@media (max-width: 500px) {
+    .main-container {
+        flex-direction: column; /* Change layout to column */
+        align-items: center; /* Center align the items */
     }
+
+    .left-side,
+    .right-side {
+        width: 100%; /* Full width for each section */
+        margin-top: 0; /* Remove top margin for right side */
+        flex: none; /* Remove flex sizing */
+    }
+
+    .profile-pic-container {
+        margin-left: auto; /* Center the profile picture container horizontally */
+        margin-right: auto;
+    }
+
+    .delete-account-button,
+    .retake-quiz-button {
+        margin-top: 20px; /* Reduce top margin for better spacing */
+    }
+
+    .field-container{
+        padding-left: 30px;
+        
+
+    }
+
+    .text-field {
+        margin-left:0;
+    }
+
+    .delete-account-container{
+        margin-top:0px;
+    }
+
+    .some-button{
+        margin:5px;
+    }
+
+
 
 
 }

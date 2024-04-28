@@ -23,10 +23,7 @@ const Main = () => {
       alert("Please use a buffalo.edu email address to sign up");
       return;
     }
-
     
-
- 
     try {
       const response = await fetch(`${webServerUrl}/backend/register/register.php`, {
         method: 'POST',
@@ -53,6 +50,12 @@ const Main = () => {
     }
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSignUp();
+    }
+  };
+
   return (
     <div className="main-container">
       <div className="bg">
@@ -78,7 +81,7 @@ const Main = () => {
             </div>
             <div className="input">
               <label className="label">Confirm Password</label>
-              <input className="textfield" type="password" placeholder="Re-enter your password" onChange={e => setConfirmPassword(e.target.value)} />
+              <input className="textfield" type="password" placeholder="Re-enter your password" onChange={e => setConfirmPassword(e.target.value)} onKeyDown={handleKeyDown} />
             </div>
             <div className="extra-space"></div>
             <button className="primary" type="button" onClick={handleSignUp}>Sign Up</button>

@@ -10,6 +10,7 @@ import QuizPage from './webpages/quizPage/QuizPage';
 import Review from './webpages/Review/Review';
 import Search from './webpages/searchresult/searchresult';
 import Saved from './webpages/savedProfessor/saved'
+import Recommend from './webpages/Recommendpage/Recommend'
 
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
@@ -33,10 +34,12 @@ function App() {
             {/* Assuming you want the search feature open to everyone in sprint 2, so it's not wrapped */}
             <Route path="/search" element={<Search />} />
             <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />
+            <Route path="/Recommendpage" element={<ProtectedRoute><Recommend /></ProtectedRoute>} />
+            
           </Routes>
         </div>
       </Router>
-    </AuthProvider>
+    </AuthProvider>        
   );
 }
 
