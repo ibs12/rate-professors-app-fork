@@ -240,6 +240,7 @@ const ProfessorCard = () => {
                         name: name,
                         department: department,
                         profilePicture: '',
+                        rating: '',
                         reviews: updatedReviews
                     }));
                     /*
@@ -250,12 +251,12 @@ const ProfessorCard = () => {
                         //rating: '-',
                         rating: data.updatedAverages.total_average, // You may want to calculate the overall rating based on all reviews
                         reviews: updatedReviews
-                    });
+                    });*/
 
-                    // Calculate and set averages
+                    //Calculate and set averages
                     calculateAverages(updatedReviews);
                     const averageGPAs = calculateAverageGPA(updatedReviews);
-                    setAverageGPAs(averageGPAs);*/
+                    setAverageGPAs(averageGPAs);
                 } else {
                     // If no reviews available, set only the basic information
                     setProfessorInfo(prevInfo => ({
