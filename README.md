@@ -10,7 +10,6 @@ InSight allows University/College Students to find the best profesors from their
 
 # Features
 
-Visit the following link to view gifs demoing features: https://github.com/ibs12/rate-professors-app/blob/main/README.md
 
 ## Search for a professor
 
